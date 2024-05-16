@@ -1,5 +1,6 @@
-require 'fastlane/action'
-require_relative '../helper/semantic_versioning_helper'
+require "fastlane/action"
+require "fastlane_core/configuration/config_item"
+require_relative "../helper/semantic_versioning_helper"
 
 module Fastlane
   module Actions
@@ -18,12 +19,12 @@ module Fastlane
 
         UI.message("The semantic_versioning plugin is working!")
 
-        current_version = Helper::SemanticVersioningHelper.get_version_number
+        current_version = Helper::SemanticVersioningHelper.version_number
         formatted_tag = Helper::SemanticVersioningHelper.formatted_tag(current_version, params[:tag_format])
 
         commits = Helper::SemanticVersioningHelper.git_commits(
           from: Helper::SemanticVersioningHelper.git_tag_exists?(formatted_tag) ? formatted_tag : nil,
-          allowed_types: params[:allowed_types],
+          allowed_types: params[:allowed_types]
         )
 
         bump_type = Helper::SemanticVersioningHelper.bump_type(commits: commits, bump_map: params[:bump_map])
@@ -38,7 +39,8 @@ module Fastlane
       end
 
       def self.description
-        "Retrieve semantic versioning information from commit history."
+        "Retrieve semantic versioning information from commit history." \
+          ""
       end
 
       def self.authors
@@ -48,10 +50,10 @@ module Fastlane
       def self.output
         # Define the shared values you are going to provide
         [
-          ['SEMVER_CURRENT_VERSION', 'Current version of the project as provided'],
-          ['SEMVER_CURRENT_TAG', 'Current tag for the current version number'],
-          ['SEMVER_BUMP_TYPE', 'Type of version bump. One of major, minor, or patch'],
-          ['SEMVER_NEXT_VERSION', 'Next version that would have to be set from current version and commits'],
+          ["SEMVER_CURRENT_VERSION", "Current version of the project as provided"],
+          ["SEMVER_CURRENT_TAG", "Current tag for the current version number"],
+          ["SEMVER_BUMP_TYPE", "Type of version bump. One of major, minor, or patch"],
+          ["SEMVER_NEXT_VERSION", "Next version that would have to be set from current version and commits"]
         ]
       end
 
@@ -68,42 +70,42 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :tag_format,
-                                  env_name: "SEMANTIC_VERSIONING_TAG_FORMAT",
-                               description: "The format for the git tag",
-                                  optional: true,
-                             default_value: '$version',
-                                      type: String),
+                                       env_name: "SEMANTIC_VERSIONING_TAG_FORMAT",
+                                       description: "The format for the git tag",
+                                       optional: true,
+                                       default_value: "$version",
+                                       type: String),
           FastlaneCore::ConfigItem.new(key: :allowed_types,
-                                  env_name: "SEMANTIC_VERSIONING_ALLOWED_TYPES",
-                               description: "List of allowed commit types",
-                                  optional: true,
-                             default_value: %w[build ci docs feat fix perf refactor style test chore revert bump init],
-                                      type: Array),
+                                       env_name: "SEMANTIC_VERSIONING_ALLOWED_TYPES",
+                                       description: "List of allowed commit types",
+                                       optional: true,
+                                       default_value: %w[build ci docs feat fix perf refactor style test chore revert bump init],
+                                       type: Array),
           FastlaneCore::ConfigItem.new(key: :type_map,
-                                  env_name: "SEMANTIC_VERSIONING_TYPE_MAP",
-                               description: "Map of types to section titles for the changelog."\
-                                            "Only the specified types will be used for the changelog",
-                                  optional: true,
-                             default_value: {breaking: "BREAKING CHANGES", feat: "Features", fix: "Bug Fixes"},
-                                 is_string: false,
-                              verify_block: ->(value) { verify_type_map(value) } ),
+                                       env_name: "SEMANTIC_VERSIONING_TYPE_MAP",
+                                       description: "Map of types to section titles for the changelog." \
+                                                    "Only the specified types will be used for the changelog",
+                                       optional: true,
+                                       default_value: { breaking: "BREAKING CHANGES", feat: "Features", fix: "Bug Fixes" },
+                                       is_string: false,
+                                       verify_block: ->(value) { verify_type_map(value) }),
           FastlaneCore::ConfigItem.new(key: :bump_map,
-                               description: "Map of commit types to their bump level (major, minor, patch)",
-                                  optional: true,
-                             default_value: {breaking: :major, feat: :minor, fix: :patch},
-                                 is_string: false,
-                              verify_block: ->(value) { verify_bump_map(value) } )
+                                       description: "Map of commit types to their bump level (major, minor, patch)",
+                                       optional: true,
+                                       default_value: { breaking: :major, feat: :minor, fix: :patch },
+                                       is_string: false,
+                                       verify_block: ->(value) { verify_bump_map(value) })
         ]
       end
 
       def self.verify_type_map(value)
-        UI.user_error!("Parameter 'type_map' must be a Hash.") unless value.is_a?(Hash)
+        UI.user_error!("Parameter 'type_map' must be a Hash.") unless value.kind_of?(Hash)
         # It could be helpful to also test for valid keys, which must all be part of ConfigItem :allowed_types plus breaking.
         # How to check this?
       end
 
       def self.verify_bump_map(value)
-        UI.user_error!("Parameter 'bump_map' must be a Hash.") unless value.is_a?(Hash)
+        UI.user_error!("Parameter 'bump_map' must be a Hash.") unless value.kind_of?(Hash)
       end
 
       def self.is_supported?(platform)

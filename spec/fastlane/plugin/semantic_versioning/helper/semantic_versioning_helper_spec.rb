@@ -2,18 +2,17 @@ require "git"
 
 def raw_commit(message)
   indented_message = message.each_line.map { |e| "    #{e.chomp}" }.join("\n")
-  header = <<-EOS.gsub("    ", "")
+  header = <<-COMMIT.gsub("    ", "")
     commit 0d22b3b72c22951a804bffadc6fbdb55a99ca996
     tree bf7f08c7f932db12030e312689155bccc47c5bb3
     author Me <email@example.com> 1715848588 +0200
     committer Me <email@example.com> 1715848588 +0200
 
-  EOS
+  COMMIT
   return header + indented_message
 end
 
 describe Fastlane::Helper::SemanticVersioningHelper do
-
   describe ".parse_conventional_commit" do
     subject { described_class.parse_conventional_commit(commit: commit, allowed_types: allowed_types) }
 
@@ -127,8 +126,8 @@ describe Fastlane::Helper::SemanticVersioningHelper do
   fdescribe ".bump_type" do
     subject { described_class.bump_type(commits: commits, bump_map: bump_map) }
 
-    let(:commits) { types.map { |t| t == :breaking ? { type: :feat, breaking: "x" } : { type: t} } }
-    let(:bump_map) { { breaking: :major, feat: :minor, fix: :patch} }
+    let(:commits) { types.map { |t| t == :breaking ? { type: :feat, breaking: "x" } : { type: t } } }
+    let(:bump_map) { { breaking: :major, feat: :minor, fix: :patch } }
 
     context "when there are no relevant commits" do
       let(:types) { %i[init build docs] }

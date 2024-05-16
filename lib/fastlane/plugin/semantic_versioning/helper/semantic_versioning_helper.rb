@@ -1,6 +1,6 @@
-require 'fastlane_core/ui/ui'
-require 'fastlane/actions/get_version_number'
-require 'git'
+require "fastlane_core/ui/ui"
+require "fastlane/actions/get_version_number"
+require "git"
 
 module Fastlane
   UI = FastlaneCore::UI unless Fastlane.const_defined?(:UI)
@@ -14,12 +14,12 @@ module Fastlane
         UI.message("Hello from the semantic_versioning plugin helper!")
       end
 
-      def self.get_version_number
+      def self.version_number
         Actions::GetVersionNumberAction.run({})
       end
 
       def self.formatted_tag(tag, format)
-        format.sub('$version', tag)
+        format.sub("$version", tag)
       end
 
       def self.git_tag_exists?(tag)
@@ -29,9 +29,9 @@ module Fastlane
       # Retrieves git commits and returns them grouped by type
       def self.git_commits(from:, allowed_types:)
         logs = from ? git.log(-1).between(from) : git.log(-1)
-        logs.reverse_each.map { |commit|
+        logs.reverse_each.map do |commit|
           parse_conventional_commit(commit: commit, allowed_types: allowed_types)
-        }.compact
+        end.compact
       end
 
       def self.group_commits(commits:, allowed_types:)
@@ -60,7 +60,7 @@ module Fastlane
             return :major
           elsif bump_type == :minor
             result = :minor
-          elsif bump_type == :patch && result == nil
+          elsif bump_type == :patch && result.nil?
             result = :patch
           end
         end
@@ -73,7 +73,7 @@ module Fastlane
         commit.message.match(/^(?<type>#{types})(\((?<scope>\S+)\))?(?<breaking>!)?:\s+(?<subject>[^\n\r]+)(\z|\n\n(?<body>.*\z))/m) do |match|
           unless allowed_types.include?(match[:type].to_sym)
             UI.important("Commit #{commit.sha} has invalid type: #{match[:type]}. Ignoring")
-            return
+            break
           end
 
           cc = {
@@ -115,7 +115,9 @@ module Fastlane
       end
 
       def self.git
+        # rubocop:disable Style/ClassVars
         @@git ||= Git.open(".")
+        # rubocop:enable Style/ClassVars
       end
     end
   end

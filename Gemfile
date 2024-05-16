@@ -1,33 +1,31 @@
-source('https://rubygems.org')
+source("https://rubygems.org")
 
 # Provides a consistent environment for Ruby projects by tracking and installing exact gem versions.
-gem 'bundler'
+gem "bundler"
 # Automation tool for mobile developers.
-gem 'fastlane', '>= 2.220.0'
+gem "fastlane", ">= 2.220.0"
 # Provides fast development by watching and automatically running tests.
 gem "guard", "~> 2.18"
 # Guard helper for RSpec tests.
 gem "guard-rspec", "~> 4.7"
 # Provides an interactive debugging environment for Ruby.
-gem 'pry'
+gem "pry"
 # A simple task automation tool.
-gem 'rake'
+gem "rake"
 # Behavior-driven testing tool for Ruby.
-gem 'rspec'
+gem "rspec"
 # Formatter for RSpec to generate JUnit compatible reports.
-gem 'rspec_junit_formatter'
+gem "rspec_junit_formatter"
 # A Ruby static code analyzer and formatter.
-gem 'rubocop', '1.50.2'
+gem "rubocop", "1.50.2"
 # A collection of RuboCop cops for performance optimizations.
-gem 'rubocop-performance'
-# A RuboCop extension focused on enforcing tools.
-gem 'rubocop-require_tools'
+gem "rubocop-performance"
 # A RuboCop extension focused on RSpec files.
-gem 'rubocop-rspec'
+gem "rubocop-rspec"
 # SimpleCov is a code coverage analysis tool for Ruby.
-gem 'simplecov'
+gem "simplecov"
 
 gemspec
 
-plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')
+plugins_path = File.join(File.dirname(__FILE__), "fastlane", "Pluginfile")
 eval_gemfile(plugins_path) if File.exist?(plugins_path)

@@ -1,5 +1,5 @@
-require 'fastlane/action'
-require_relative '../helper/semantic_versioning_helper'
+require "fastlane/action"
+require_relative "../helper/semantic_versioning_helper"
 
 module Fastlane
   module Actions
