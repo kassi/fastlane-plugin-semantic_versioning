@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = '993392+kassi@users.noreply.github.com'
 
   spec.summary       = 'Version and changelog management following semver and conventional commits.'
-  # spec.homepage      = "https://github.com/<GITHUB_USERNAME>/fastlane-plugin-semantic_versioning"
+  spec.homepage      = "https://github.com/kassi/fastlane-plugin-semantic_versioning"
   spec.license       = "MIT"
 
   spec.files         = Dir["lib/**/*"] + %w(README.md LICENSE)
