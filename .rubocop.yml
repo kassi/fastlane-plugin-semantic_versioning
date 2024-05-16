@@ -3,6 +3,7 @@ require:
 - rubocop/require_tools
 - rubocop-performance
 AllCops:
+  SuggestExtensions: false
   TargetRubyVersion: 2.6
   NewCops: enable
   Include:

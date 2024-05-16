@@ -18,6 +18,8 @@ gem 'rubocop', '1.50.2'
 gem 'rubocop-performance'
 # A RuboCop extension focused on enforcing tools.
 gem 'rubocop-require_tools'
+# A RuboCop extension focused on RSpec files.
+gem 'rubocop-rspec'
 # SimpleCov is a code coverage analysis tool for Ruby.
 gem 'simplecov'
 
