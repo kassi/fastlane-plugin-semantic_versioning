@@ -4,6 +4,10 @@ source('https://rubygems.org')
 gem 'bundler'
 # Automation tool for mobile developers.
 gem 'fastlane', '>= 2.220.0'
+# Provides fast development by watching and automatically running tests.
+gem "guard", "~> 2.18"
+# Guard helper for RSpec tests.
+gem "guard-rspec", "~> 4.7"
 # Provides an interactive debugging environment for Ruby.
 gem 'pry'
 # A simple task automation tool.
