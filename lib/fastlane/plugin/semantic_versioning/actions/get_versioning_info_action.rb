@@ -9,6 +9,7 @@ module Fastlane
       SEMVER_CURRENT_TAG = :SEMVER_CURRENT_TAG
       SEMVER_BUMP_TYPE = :SEMVER_BUMP_TYPE
       SEMVER_NEXT_VERSION = :SEMVER_NEXT_VERSION
+      SEMVER_BUMPABLE = :SEMVER_BUMPABLE
     end
 
     class GetVersioningInfoAction < Action
@@ -29,18 +30,19 @@ module Fastlane
 
         bump_type = Helper::SemanticVersioningHelper.bump_type(commits: commits, bump_map: params[:bump_map])
         next_version = Helper::SemanticVersioningHelper.increase_version(current_version: current_version, bump_type: bump_type)
+        bumpable = current_version != next_version
 
         Actions.lane_context[SharedValues::SEMVER_CURRENT_VERSION] = current_version
         Actions.lane_context[SharedValues::SEMVER_CURRENT_TAG] = formatted_tag
         Actions.lane_context[SharedValues::SEMVER_BUMP_TYPE] = bump_type
         Actions.lane_context[SharedValues::SEMVER_NEXT_VERSION] = next_version
+        Actions.lane_context[SharedValues::SEMVER_BUMPABLE] = bumpable
 
-        return current_version != next_version
+        return bumpable
       end
 
       def self.description
-        "Retrieve semantic versioning information from commit history." \
-          ""
+        "Retrieve semantic versioning information from commit history."
       end
 
       def self.authors
@@ -53,7 +55,8 @@ module Fastlane
           ["SEMVER_CURRENT_VERSION", "Current version of the project as provided"],
           ["SEMVER_CURRENT_TAG", "Current tag for the current version number"],
           ["SEMVER_BUMP_TYPE", "Type of version bump. One of major, minor, or patch"],
-          ["SEMVER_NEXT_VERSION", "Next version that would have to be set from current version and commits"]
+          ["SEMVER_NEXT_VERSION", "Next version that would have to be set from current version and commits"],
+          ["SEMVER_BUMPABLE", "True if a version bump is possible"]
         ]
       end
 

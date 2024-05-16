@@ -47,6 +47,7 @@ describe Fastlane::Actions::GetVersioningInfoAction do
       expect(subject).to be_falsy
       expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_CURRENT_VERSION]).to eq("0.1.0")
       expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_CURRENT_TAG]).to eq("v0.1.0")
+      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_falsy
     end
 
     context "when there are breaking changes" do
@@ -65,6 +66,7 @@ describe Fastlane::Actions::GetVersioningInfoAction do
         expect(subject).to be_truthy
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMP_TYPE]).to eq(:major)
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEXT_VERSION]).to eq("1.0.0")
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_truthy
       end
     end
 
@@ -84,6 +86,7 @@ describe Fastlane::Actions::GetVersioningInfoAction do
         expect(subject).to be_truthy
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMP_TYPE]).to eq(:minor)
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEXT_VERSION]).to eq("0.2.0")
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_truthy
       end
     end
 
@@ -100,6 +103,7 @@ describe Fastlane::Actions::GetVersioningInfoAction do
         expect(subject).to be_truthy
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMP_TYPE]).to eq(:patch)
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEXT_VERSION]).to eq("0.1.1")
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_truthy
       end
     end
   end
