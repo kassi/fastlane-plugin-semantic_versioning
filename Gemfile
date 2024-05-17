@@ -26,6 +26,7 @@ gem "rubocop-performance"
 gem "rubocop-rspec"
 # SimpleCov is a code coverage analysis tool for Ruby.
 gem "simplecov"
+gem "simplecov-lcov"
 
 gemspec
 
