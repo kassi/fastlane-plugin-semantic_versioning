@@ -109,16 +109,30 @@ describe Fastlane::Helper::SemanticVersioningHelper do
       end
     end
 
-    context "when the commit is a valid message with breaking change exclamation" do
+    context "when the commit is a valid message with major bump exclamation for feat" do
       let(:message) { "feat(my-scope)!: add new feature" }
 
-      it "returns the correct hash, setting the subject as breaking change message" do
+      it "returns the correct hash, setting the subject as feature" do
         expect(subject).not_to be_nil
         expect(subject[:type]).to eq(:feat)
         expect(subject[:scope]).to eq("my-scope")
         expect(subject[:subject]).to eq("add new feature")
         expect(subject[:body]).to be_nil
-        expect(subject[:breaking]).to eq("add new feature")
+        expect(subject[:breaking]).to be_nil
+      end
+    end
+
+    context "when the commit is a valid message with major bump exclamation for unsectioned type" do
+      let(:message) { "bump!: first official release" }
+
+      it "returns the correct hash, setting the subject as breaking change message" do
+        expect(subject).not_to be_nil
+        expect(subject[:type]).to eq(:bump)
+        expect(subject[:major]).to be_truthy
+        expect(subject[:scope]).to be_nil
+        expect(subject[:subject]).to eq("first official release")
+        expect(subject[:body]).to be_nil
+        expect(subject[:breaking]).to be_nil
       end
     end
   end
@@ -215,18 +229,30 @@ describe Fastlane::Helper::SemanticVersioningHelper do
       end
     end
 
-    context "when a breaking change is named after the subject" do
+    context "when there is a major bump commit of a non listed type" do
       let(:commits) do
         [
-          { type: :feat, breaking: "changed behavior of feature", subject: "changed behavior of feature" }
+          { type: :feat, subject: "cool feature" },
+          { type: :fix, subject: "wrong value" },
+          { type: :fix, subject: "wrong setting" },
+          { type: :bump, major: true, subject: "this is the first official release" },
+          { type: :feat, subject: "other feature" },
+          { type: :feat, subject: "changed feature" }
         ]
       end
 
-      it "only lists the change once" do
+      it "shows the subject in an additional empty section" do
         expect(subject).to eq(
           "## 1.0.0 (#{today})\n\n" \
-          "### BREAKING CHANGES:\n\n" \
-          "- changed behavior of feature\n\n"
+          "### Features:\n\n" \
+          "- cool feature\n" \
+          "- other feature\n" \
+          "- changed feature\n\n" \
+          "### Bug Fixes:\n\n" \
+          "- wrong value\n" \
+          "- wrong setting\n\n" \
+          "\n" \
+          "- this is the first official release\n\n"
         )
       end
     end

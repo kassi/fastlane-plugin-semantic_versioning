@@ -36,15 +36,19 @@ module Fastlane
 
       def self.group_commits(commits:, allowed_types:)
         result = allowed_types.to_h { |type| [type, []] }
+        result[:none] = []
 
         commits.each do |commit|
           if commit[:breaking] && allowed_types.include?(:breaking)
             result[:breaking] << commit
           end
-          next unless allowed_types.include?(commit[:type])
 
-          # If the breaking change is made from the actual feature subject, don't repeat it.
-          next if commit[:breaking] == commit[:subject]
+          if commit[:major] && !allowed_types.include?(commit[:type])
+            result[:none] << commit
+            next
+          end
+
+          next unless allowed_types.include?(commit[:type])
 
           result[commit[:type]] << commit
         end
@@ -57,6 +61,8 @@ module Fastlane
         return result if result == :major # can't go any higher
 
         commits.each do |commit|
+          return :major if commit[:major]
+
           bump_type = commit[:breaking] ? bump_map[:breaking] : bump_map[commit[:type]]
           if bump_type == :major
             return :major
@@ -72,7 +78,7 @@ module Fastlane
 
       def self.parse_conventional_commit(commit:, allowed_types:)
         types = allowed_types.join("|")
-        commit.message.match(/^(?<type>#{types})(\((?<scope>\S+)\))?(?<breaking>!)?:\s+(?<subject>[^\n\r]+)(\z|\n\n(?<body>.*\z))/m) do |match|
+        commit.message.match(/^(?<type>#{types})(\((?<scope>\S+)\))?(?<major>!)?:\s+(?<subject>[^\n\r]+)(\z|\n\n(?<body>.*\z))/m) do |match|
           unless allowed_types.include?(match[:type].to_sym)
             UI.important("Commit #{commit.sha} has invalid type: #{match[:type]}. Ignoring")
             break
@@ -80,10 +86,11 @@ module Fastlane
 
           cc = {
             type: match[:type].to_sym,
+            major: !!match[:major],
             scope: match[:scope],
             subject: match[:subject],
             body: match[:body],
-            breaking: match[:breaking] ? match[:subject] : nil,
+            breaking: nil,
             original_message: commit.message
           }
 
@@ -124,7 +131,7 @@ module Fastlane
         grouped_commits.each do |key, section_commits|
           next unless section_commits.any?
 
-          lines << "### #{type_map[key]}:"
+          lines << "### #{type_map[key]}:" if key != :none
           lines << ""
 
           section_commits.each do |commit|

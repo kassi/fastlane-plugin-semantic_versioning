@@ -91,7 +91,7 @@ describe Fastlane::Actions::GetVersioningInfoAction do
       end
     end
 
-    context "when there are fixes changes" do
+    context "when there are bug fix changes" do
       let(:messages) do
         [
           "build: just build",
@@ -100,7 +100,7 @@ describe Fastlane::Actions::GetVersioningInfoAction do
         ]
       end
 
-      it "increases minor version number for next version" do
+      it "increases patch version number for next version" do
         expect(subject).to be_truthy
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMP_TYPE]).to eq(:patch)
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION]).to eq("0.1.1")
@@ -122,6 +122,46 @@ describe Fastlane::Actions::GetVersioningInfoAction do
         expect(subject).to be_truthy
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMP_TYPE]).to eq(:major)
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION]).to eq("1.0.0")
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_truthy
+      end
+    end
+
+    context "when there is a force major bump commit for a listed type" do
+      let(:messages) do
+        [
+          "feat!: bundle for first initial version"
+        ]
+      end
+
+      it "increases major version number for next version and adds feature to changelog" do
+        expect(subject).to be_truthy
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMP_TYPE]).to eq(:major)
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION]).to eq("1.0.0")
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_CHANGELOG]).to eq(
+          "## 1.0.0 (#{Time.now.strftime('%F')})\n\n" \
+          "### Features:\n\n" \
+          "- bundle for first initial version\n\n"
+        )
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_truthy
+      end
+    end
+
+    context "when there is a force major bump commit for a non listed type" do
+      let(:messages) do
+        [
+          "bump!: bundle for first initial version"
+        ]
+      end
+
+      it "increases major version number for next version and includes an unsectioned commit in the changelog" do
+        expect(subject).to be_truthy
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMP_TYPE]).to eq(:major)
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION]).to eq("1.0.0")
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_CHANGELOG]).to eq(
+          "## 1.0.0 (#{Time.now.strftime('%F')})\n\n" \
+          "\n" \
+          "- bundle for first initial version\n\n"
+        )
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_truthy
       end
     end
