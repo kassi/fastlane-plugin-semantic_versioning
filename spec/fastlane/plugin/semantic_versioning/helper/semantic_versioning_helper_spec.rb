@@ -123,7 +123,7 @@ describe Fastlane::Helper::SemanticVersioningHelper do
     end
   end
 
-  fdescribe ".bump_type" do
+  describe ".bump_type" do
     subject { described_class.bump_type(commits: commits, bump_map: bump_map) }
 
     let(:commits) { types.map { |t| t == :breaking ? { type: :feat, breaking: "x" } : { type: t } } }
@@ -158,6 +158,76 @@ describe Fastlane::Helper::SemanticVersioningHelper do
 
       it "returns patch" do
         expect(subject).to eq(:patch)
+      end
+    end
+  end
+
+  describe ".build_changelog" do
+    subject { described_class.build_changelog(version: version, commits: commits, type_map: type_map) }
+
+    let(:version) { "1.0.0" }
+    let(:commits) { [] }
+    let(:type_map) { { breaking: "BREAKING CHANGES", feat: "Features", fix: "Bug Fixes" } }
+    let(:today) { Time.now.strftime("%F") }
+
+    context "when there are no commits" do
+      it "only writes a title with an empty line" do
+        expect(subject).to eq("## 1.0.0 (#{today})\n\n")
+      end
+    end
+
+    context "when there are breaking changes" do
+      let(:commits) { [{ type: :feat, breaking: "this breaks", subject: "cool feature" }] }
+
+      it "adds the breaking changes section with title" do
+        expect(subject).to eq(
+          "## 1.0.0 (#{today})\n\n### BREAKING CHANGES:\n\n- this breaks\n\n" \
+          "### Features:\n\n- cool feature\n\n"
+        )
+      end
+    end
+
+    context "when there are many items for a section" do
+      let(:commits) do
+        [
+          { type: :feat, breaking: "this breaks", subject: "cool feature" },
+          { type: :fix, breaking: false, subject: "wrong value" },
+          { type: :fix, breaking: false, subject: "wrong setting" },
+          { type: :feat, breaking: false, subject: "other feature" },
+          { type: :feat, breaking: "this breaks as well", subject: "changed feature" }
+        ]
+      end
+
+      it "lists all items per section" do
+        expect(subject).to eq(
+          "## 1.0.0 (#{today})\n\n" \
+          "### BREAKING CHANGES:\n\n" \
+          "- this breaks\n" \
+          "- this breaks as well\n\n" \
+          "### Features:\n\n" \
+          "- cool feature\n" \
+          "- other feature\n" \
+          "- changed feature\n\n" \
+          "### Bug Fixes:\n\n" \
+          "- wrong value\n" \
+          "- wrong setting\n\n"
+        )
+      end
+    end
+
+    context "when a breaking change is named after the subject" do
+      let(:commits) do
+        [
+          { type: :feat, breaking: "changed behavior of feature", subject: "changed behavior of feature" }
+        ]
+      end
+
+      it "only lists the change once" do
+        expect(subject).to eq(
+          "## 1.0.0 (#{today})\n\n" \
+          "### BREAKING CHANGES:\n\n" \
+          "- changed behavior of feature\n\n"
+        )
       end
     end
   end

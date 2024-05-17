@@ -38,9 +38,10 @@ module Fastlane
         result = allowed_types.to_h { |type| [type, []] }
 
         commits.each do |commit|
-          if commit[:breaking]
+          if commit[:breaking] && allowed_types.include?(:breaking)
             result[:breaking] << commit
           end
+          next unless allowed_types.include?(commit[:type])
 
           # If the breaking change is made from the actual feature subject, don't repeat it.
           next if commit[:breaking] == commit[:subject]
@@ -108,6 +109,49 @@ module Fastlane
         end
 
         return version_array.join(".")
+      end
+
+      # Builds and returns th changelog for the upcoming release.
+      def self.build_changelog(version:, commits:, type_map:, name: nil)
+        lines = []
+
+        title = [version, name, Time.now.strftime("(%F)")].compact.join(" ")
+        lines << "## #{title}"
+        lines << ""
+
+        grouped_commits = group_commits(commits: commits, allowed_types: type_map.keys)
+        grouped_commits.each do |key, section_commits|
+          next unless section_commits.any?
+
+          lines << "### #{type_map[key]}:"
+          lines << ""
+
+          section_commits.each do |commit|
+            lines << "- #{key == :breaking ? commit[:breaking] : commit[:subject]}"
+          end
+
+          lines << ""
+        end
+
+        return "#{lines.join("\n")}\n"
+      end
+
+      def self.write_changelog(path:, changelog:)
+        old_changelog = File.new(path).read if File.exist?(path)
+
+        File.open(path, "w") do |file|
+          file.write(changelog)
+          if old_changelog
+            file.write("\n")
+            file.write(old_changelog)
+          end
+        end
+      end
+
+      def self.bump_message(format)
+        format("bump: %s", format
+          .sub("$current_version", Actions.lane_context[Actions::SharedValues::SEMVER_CURRENT_VERSION])
+          .sub("$new_version", Actions.lane_context[Actions::SharedValues::SEMVER_NEW_VERSION]))
       end
 
       def self.git_command(args)

@@ -65,6 +65,7 @@ describe Fastlane::Actions::GetVersioningInfoAction do
         expect(subject).to be_truthy
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMP_TYPE]).to eq(:major)
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION]).to eq("1.0.0")
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_CHANGELOG]).to match(/\A## 1.0.0/)
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_truthy
       end
     end
@@ -85,6 +86,7 @@ describe Fastlane::Actions::GetVersioningInfoAction do
         expect(subject).to be_truthy
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMP_TYPE]).to eq(:minor)
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION]).to eq("0.2.0")
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_CHANGELOG]).to match(/\A## 0.2.0/)
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_truthy
       end
     end

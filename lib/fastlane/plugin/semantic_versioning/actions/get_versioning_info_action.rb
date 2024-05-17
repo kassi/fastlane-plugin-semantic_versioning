@@ -9,6 +9,7 @@ module Fastlane
       SEMVER_CURRENT_TAG = :SEMVER_CURRENT_TAG
       SEMVER_BUMP_TYPE = :SEMVER_BUMP_TYPE
       SEMVER_NEW_VERSION = :SEMVER_NEW_VERSION
+      SEMVER_NEW_CHANGELOG = :SEMVER_NEW_CHANGELOG
       SEMVER_BUMPABLE = :SEMVER_BUMPABLE
     end
 
@@ -29,13 +30,15 @@ module Fastlane
         )
 
         bump_type = Helper::SemanticVersioningHelper.bump_type(commits: commits, bump_map: params[:bump_map])
-        next_version = Helper::SemanticVersioningHelper.increase_version(current_version: current_version, bump_type: bump_type)
-        bumpable = current_version != next_version
+        new_version = Helper::SemanticVersioningHelper.increase_version(current_version: current_version, bump_type: bump_type)
+        new_changelog = Helper::SemanticVersioningHelper.build_changelog(version: new_version, commits: commits, type_map: params[:type_map])
+        bumpable = current_version != new_version
 
         Actions.lane_context[SharedValues::SEMVER_CURRENT_VERSION] = current_version
         Actions.lane_context[SharedValues::SEMVER_CURRENT_TAG] = formatted_tag
         Actions.lane_context[SharedValues::SEMVER_BUMP_TYPE] = bump_type
-        Actions.lane_context[SharedValues::SEMVER_NEW_VERSION] = next_version
+        Actions.lane_context[SharedValues::SEMVER_NEW_VERSION] = new_version
+        Actions.lane_context[SharedValues::SEMVER_NEW_CHANGELOG] = new_changelog
         Actions.lane_context[SharedValues::SEMVER_BUMPABLE] = bumpable
 
         return bumpable
@@ -56,6 +59,7 @@ module Fastlane
           ["SEMVER_CURRENT_TAG", "Current tag for the current version number"],
           ["SEMVER_BUMP_TYPE", "Type of version bump. One of major, minor, or patch"],
           ["SEMVER_NEW_VERSION", "New version that would have to be set from current version and commits"],
+          ["SEMVER_NEW_CHANGELOG", "New changelog section for the new bump"],
           ["SEMVER_BUMPABLE", "True if a version bump is possible"]
         ]
       end
