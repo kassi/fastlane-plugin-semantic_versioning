@@ -14,9 +14,10 @@ end
 
 describe Fastlane::Helper::SemanticVersioningHelper do
   describe ".parse_conventional_commit" do
-    subject { described_class.parse_conventional_commit(commit: commit, allowed_types: allowed_types) }
+    subject { described_class.parse_conventional_commit(commit: commit, allowed_types: allowed_types, bump_map: bump_map) }
 
     let(:allowed_types) { %i[build ci docs feat fix perf refactor style test chore revert bump init] }
+    let(:bump_map) { { breaking: :major, feat: :minor, fix: :patch } }
     let(:message) { "" }
     let(:git) { Git.open(".") }
     let(:commit) { git.log(1).first }
@@ -138,40 +139,49 @@ describe Fastlane::Helper::SemanticVersioningHelper do
   end
 
   describe ".bump_type" do
-    subject { described_class.bump_type(commits: commits, bump_map: bump_map) }
+    subject { described_class.bump_type(commits: commits, force_type: force_type) }
 
-    let(:commits) { types.map { |t| t == :breaking ? { type: :feat, breaking: "x" } : { type: t } } }
-    let(:bump_map) { { breaking: :major, feat: :minor, fix: :patch } }
+    let(:commits) { types.map { |e| { bump: e } } }
+    let(:force_type) { nil }
 
     context "when there are no relevant commits" do
-      let(:types) { %i[init build docs] }
+      let(:types) { [nil, nil, nil] }
 
       it "returns nil" do
         expect(subject).to be_nil
       end
     end
 
-    context "when there is at least one breaking change commit" do
-      let(:types) { %i[init build docs feat breaking build fix feat fix refactor] }
+    context "when there is at least one major bump commit" do
+      let(:types) { [nil, :patch, :patch, :minor, :major, nil] }
 
       it "returns major" do
         expect(subject).to eq(:major)
       end
     end
 
-    context "when there are several feat and fix commits" do
-      let(:types) { %i[init build docs feat feat build fix feat fix refactor] }
+    context "when there are several minor and patches commits" do
+      let(:types) { [nil, :patch, :minor, :patch, :minor, nil] }
 
       it "returns minor" do
         expect(subject).to eq(:minor)
       end
     end
 
-    context "when there only fixes" do
-      let(:types) { %i[init build docs fix fix docs] }
+    context "when there only patches" do
+      let(:types) { [nil, :patch, :patch, nil, :patch] }
 
       it "returns patch" do
         expect(subject).to eq(:patch)
+      end
+    end
+
+    context "when there is a force type" do
+      let(:types) { [nil, :patch, :patch, nil, :patch] }
+      let(:force_type) { :major }
+
+      it "returns major" do
+        expect(subject).to eq(:major)
       end
     end
   end

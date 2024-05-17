@@ -27,10 +27,11 @@ module Fastlane
 
         commits = Helper::SemanticVersioningHelper.git_commits(
           from: Helper::SemanticVersioningHelper.git_tag_exists?(formatted_tag) ? formatted_tag : nil,
-          allowed_types: params[:allowed_types]
+          allowed_types: params[:allowed_types],
+          bump_map: params[:bump_map]
         )
 
-        bump_type = Helper::SemanticVersioningHelper.bump_type(commits: commits, bump_map: params[:bump_map], force_type: params[:force_type])
+        bump_type = Helper::SemanticVersioningHelper.bump_type(commits: commits, force_type: params[:force_type])
         new_version = Helper::SemanticVersioningHelper.increase_version(current_version: current_version, bump_type: bump_type)
         new_changelog = Helper::SemanticVersioningHelper.build_changelog(version: new_version, commits: commits, type_map: params[:type_map])
         bumpable = current_version != new_version

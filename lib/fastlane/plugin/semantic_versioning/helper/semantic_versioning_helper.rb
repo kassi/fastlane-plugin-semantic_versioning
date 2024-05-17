@@ -27,11 +27,68 @@ module Fastlane
       end
 
       # Retrieves git commits and returns them grouped by type
-      def self.git_commits(from:, allowed_types:)
+      def self.git_commits(from:, allowed_types:, bump_map:)
         logs = from ? git.log(-1).between(from) : git.log(-1)
         logs.reverse_each.map do |commit|
-          parse_conventional_commit(commit: commit, allowed_types: allowed_types)
+          parse_conventional_commit(commit: commit, allowed_types: allowed_types, bump_map: bump_map)
         end.compact
+      end
+
+      def self.parse_conventional_commit(commit:, allowed_types:, bump_map:)
+        types = allowed_types.join("|")
+        commit.message.match(/^(?<type>#{types})(\((?<scope>\S+)\))?(?<major>!)?:\s+(?<subject>[^\n\r]+)(\z|\n\n(?<body>.*\z))/m) do |match|
+          unless allowed_types.include?(match[:type].to_sym)
+            UI.important("Commit #{commit.sha} has invalid type: #{match[:type]}. Ignoring")
+            break
+          end
+
+          cc = {
+            type: match[:type].to_sym,
+            major: !!match[:major],
+            scope: match[:scope],
+            subject: match[:subject],
+            body: match[:body],
+            breaking: nil,
+            original_message: commit.message
+          }
+
+          match[:body]&.match(/^BREAKING CHANGE?: (.+)\z/) do |breaking|
+            cc[:breaking] = breaking[1]
+          end
+
+          cc[:bump] = commit_bump_type(commit: cc, bump_map: bump_map)
+
+          return cc
+        end
+      end
+
+      def self.commit_bump_type(commit:, bump_map:)
+        return :major if commit[:major]
+
+        return bump_map[:breaking] if commit[:breaking]
+
+        return bump_map[commit[:type]]
+      end
+
+      def self.bump_type(commits:, force_type: nil)
+        return force_type if force_type == :major # can't go any higher
+
+        result = force_type
+
+        commits.each do |commit|
+          return :major if commit[:major]
+
+          bump_type = commit[:bump]
+          if bump_type == :major
+            return :major
+          elsif bump_type == :minor
+            result = :minor
+          elsif bump_type == :patch && result.nil?
+            result = :patch
+          end
+        end
+
+        return result
       end
 
       def self.group_commits(commits:, allowed_types:)
@@ -54,52 +111,6 @@ module Fastlane
         end
 
         return result
-      end
-
-      def self.bump_type(commits:, bump_map:, force_type: nil)
-        result = force_type
-        return result if result == :major # can't go any higher
-
-        commits.each do |commit|
-          return :major if commit[:major]
-
-          bump_type = commit[:breaking] ? bump_map[:breaking] : bump_map[commit[:type]]
-          if bump_type == :major
-            return :major
-          elsif bump_type == :minor
-            result = :minor
-          elsif bump_type == :patch && result.nil?
-            result = :patch
-          end
-        end
-
-        return result
-      end
-
-      def self.parse_conventional_commit(commit:, allowed_types:)
-        types = allowed_types.join("|")
-        commit.message.match(/^(?<type>#{types})(\((?<scope>\S+)\))?(?<major>!)?:\s+(?<subject>[^\n\r]+)(\z|\n\n(?<body>.*\z))/m) do |match|
-          unless allowed_types.include?(match[:type].to_sym)
-            UI.important("Commit #{commit.sha} has invalid type: #{match[:type]}. Ignoring")
-            break
-          end
-
-          cc = {
-            type: match[:type].to_sym,
-            major: !!match[:major],
-            scope: match[:scope],
-            subject: match[:subject],
-            body: match[:body],
-            breaking: nil,
-            original_message: commit.message
-          }
-
-          match[:body]&.match(/^BREAKING CHANGE?: (.+)\z/) do |breaking|
-            cc[:breaking] = breaking[1]
-          end
-
-          return cc
-        end
       end
 
       def self.increase_version(current_version:, bump_type:)
