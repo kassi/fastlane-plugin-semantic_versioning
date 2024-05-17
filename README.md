@@ -12,27 +12,44 @@ fastlane add_plugin semantic_versioning
 
 ## About semantic_versioning
 
-Version and changelog management following semver and conventional commits.
+Version and changelog management following semantic versioning and conventional commits.
 
-**Note to author:** Add a more detailed description about this plugin here. If your plugin contains multiple actions, make sure to mention them here.
+The plugin provides two actions that have to be called in sequence, but therefore allow
+additional interaction with the results before an actual commit is being made.
+
+One example could be to get the version info for the upcoming release, and when this is
+successful, i.e. a version bump is possible, create a release branch with that version number and
+change to that branch before making any changes. Then call the `semantic_bump` action to create the commit on the release branch, before you may want to create a pull request for the new release.
+
+Hint: You can also use the context to upload the changelog to AppStoreConnect afterwards. See the example `Fastfile` for more info.
+
+### get_versioning_info
+
+Call this in your lane to prepare a bump according to the rules. It will
+- Determine next version number
+- Build the changelog for the upcoming version bump
+
+and provide this information in shared variables that are used in the second action.
+
+### semantic_bump
+
+Call this to actually bump the version, write the changelog and commit everything.
 
 ## Example
 
 Check out the [example `Fastfile`](fastlane/Fastfile) to see how to use this plugin. Try it by cloning the repo, running `fastlane install_plugins` and `bundle exec fastlane test`.
-
-**Note to author:** Please set up a sample project to make it easy for users to explore what your plugin does. Provide everything that is necessary to try out the plugin in this project (including a sample Xcode/Android project if necessary)
 
 ## Run tests for this plugin
 
 To run both the tests, and code style validation, run
 
 ```
-rake
+bundle exec rake
 ```
 
 To automatically fix many of the styling issues, use
 ```
-rubocop -a
+bundle exec rubocop -a
 ```
 
 ## Issues and Feedback

@@ -76,18 +76,24 @@ module Fastlane
 
       def self.available_options
         [
-          FastlaneCore::ConfigItem.new(key: :tag_format,
-                                       env_name: "SEMANTIC_VERSIONING_TAG_FORMAT",
-                                       description: "The format for the git tag",
-                                       optional: true,
-                                       default_value: "$version",
-                                       type: String),
           FastlaneCore::ConfigItem.new(key: :allowed_types,
                                        env_name: "SEMANTIC_VERSIONING_ALLOWED_TYPES",
                                        description: "List of allowed commit types",
                                        optional: true,
                                        default_value: %w[build ci docs feat fix perf refactor style test chore revert bump init],
                                        type: Array),
+          FastlaneCore::ConfigItem.new(key: :bump_map,
+                                       description: "Map of commit types to their bump level (major, minor, patch)",
+                                       optional: true,
+                                       default_value: { breaking: :major, feat: :minor, fix: :patch },
+                                       is_string: false,
+                                       verify_block: ->(value) { verify_bump_map(value) }),
+          FastlaneCore::ConfigItem.new(key: :tag_format,
+                                       env_name: "SEMANTIC_VERSIONING_TAG_FORMAT",
+                                       description: "The format for the git tag",
+                                       optional: true,
+                                       default_value: "$version",
+                                       type: String),
           FastlaneCore::ConfigItem.new(key: :type_map,
                                        env_name: "SEMANTIC_VERSIONING_TYPE_MAP",
                                        description: "Map of types to section titles for the changelog." \
@@ -95,13 +101,7 @@ module Fastlane
                                        optional: true,
                                        default_value: { breaking: "BREAKING CHANGES", feat: "Features", fix: "Bug Fixes" },
                                        is_string: false,
-                                       verify_block: ->(value) { verify_type_map(value) }),
-          FastlaneCore::ConfigItem.new(key: :bump_map,
-                                       description: "Map of commit types to their bump level (major, minor, patch)",
-                                       optional: true,
-                                       default_value: { breaking: :major, feat: :minor, fix: :patch },
-                                       is_string: false,
-                                       verify_block: ->(value) { verify_bump_map(value) })
+                                       verify_block: ->(value) { verify_type_map(value) })
         ]
       end
 

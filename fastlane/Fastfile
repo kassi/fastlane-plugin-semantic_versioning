@@ -1,3 +1,22 @@
-lane :test do
-  semantic_versioning
+lane :bump do
+  # First, get information about possible next bump
+  if get_versioning_info
+    new_version = lane_context[SharedValues::SEMVER_NEW_VERSION]
+    changelog = lane_context[SharedValues::SEMVER_NEW_CHANGELOG]
+    puts "New version: #{new_version}"
+
+    # Create a release branch
+    # …
+
+    # Perform the version bump, writing the changelog, and creating the commit.
+    semantic_bump
+
+    # Optional, write changelog to release notes
+    set_changelog(changelog: changelog, version: new_version)
+
+    # Create a Pull Request for the new release
+    # …
+  else
+    UI.message("No new release necessary")
+  end
 end
