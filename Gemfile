@@ -9,6 +9,8 @@ gem "guard", "~> 2.18"
 # Guard helper for RSpec tests.
 gem "guard-rspec", "~> 4.7"
 # Provides an interactive debugging environment for Ruby.
+gem "guard-rubocop", "~> 1.5"
+# Provides an interactive debugging environment for Ruby.
 gem "pry"
 # A simple task automation tool.
 gem "rake"
