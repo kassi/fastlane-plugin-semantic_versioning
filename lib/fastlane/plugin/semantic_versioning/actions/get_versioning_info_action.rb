@@ -8,7 +8,7 @@ module Fastlane
       SEMVER_CURRENT_VERSION = :SEMVER_CURRENT_VERSION
       SEMVER_CURRENT_TAG = :SEMVER_CURRENT_TAG
       SEMVER_BUMP_TYPE = :SEMVER_BUMP_TYPE
-      SEMVER_NEXT_VERSION = :SEMVER_NEXT_VERSION
+      SEMVER_NEW_VERSION = :SEMVER_NEW_VERSION
       SEMVER_BUMPABLE = :SEMVER_BUMPABLE
     end
 
@@ -35,7 +35,7 @@ module Fastlane
         Actions.lane_context[SharedValues::SEMVER_CURRENT_VERSION] = current_version
         Actions.lane_context[SharedValues::SEMVER_CURRENT_TAG] = formatted_tag
         Actions.lane_context[SharedValues::SEMVER_BUMP_TYPE] = bump_type
-        Actions.lane_context[SharedValues::SEMVER_NEXT_VERSION] = next_version
+        Actions.lane_context[SharedValues::SEMVER_NEW_VERSION] = next_version
         Actions.lane_context[SharedValues::SEMVER_BUMPABLE] = bumpable
 
         return bumpable
@@ -55,7 +55,7 @@ module Fastlane
           ["SEMVER_CURRENT_VERSION", "Current version of the project as provided"],
           ["SEMVER_CURRENT_TAG", "Current tag for the current version number"],
           ["SEMVER_BUMP_TYPE", "Type of version bump. One of major, minor, or patch"],
-          ["SEMVER_NEXT_VERSION", "Next version that would have to be set from current version and commits"],
+          ["SEMVER_NEW_VERSION", "New version that would have to be set from current version and commits"],
           ["SEMVER_BUMPABLE", "True if a version bump is possible"]
         ]
       end

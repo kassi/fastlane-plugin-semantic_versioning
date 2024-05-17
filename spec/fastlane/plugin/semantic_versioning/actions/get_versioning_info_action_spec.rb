@@ -22,7 +22,6 @@ describe Fastlane::Actions::GetVersioningInfoAction do
     let(:current_version) { "0.1.0" }
     let(:messages) { [] }
     let(:tags) { "" }
-    let(:process_result) { double(stdout: "bla") }
     let(:command_line) { instance_double(Git::CommandLine) }
 
     before do
@@ -65,7 +64,7 @@ describe Fastlane::Actions::GetVersioningInfoAction do
       it "increases major version number for next version" do
         expect(subject).to be_truthy
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMP_TYPE]).to eq(:major)
-        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEXT_VERSION]).to eq("1.0.0")
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION]).to eq("1.0.0")
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_truthy
       end
     end
@@ -85,7 +84,7 @@ describe Fastlane::Actions::GetVersioningInfoAction do
       it "increases minor version number for next version" do
         expect(subject).to be_truthy
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMP_TYPE]).to eq(:minor)
-        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEXT_VERSION]).to eq("0.2.0")
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION]).to eq("0.2.0")
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_truthy
       end
     end
@@ -102,7 +101,7 @@ describe Fastlane::Actions::GetVersioningInfoAction do
       it "increases minor version number for next version" do
         expect(subject).to be_truthy
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMP_TYPE]).to eq(:patch)
-        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEXT_VERSION]).to eq("0.1.1")
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION]).to eq("0.1.1")
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_truthy
       end
     end
