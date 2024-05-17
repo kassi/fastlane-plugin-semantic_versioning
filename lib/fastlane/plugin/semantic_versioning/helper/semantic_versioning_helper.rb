@@ -52,8 +52,9 @@ module Fastlane
         return result
       end
 
-      def self.bump_type(commits:, bump_map:)
-        result = nil
+      def self.bump_type(commits:, bump_map:, force_type: nil)
+        result = force_type
+        return result if result == :major # can't go any higher
 
         commits.each do |commit|
           bump_type = commit[:breaking] ? bump_map[:breaking] : bump_map[commit[:type]]

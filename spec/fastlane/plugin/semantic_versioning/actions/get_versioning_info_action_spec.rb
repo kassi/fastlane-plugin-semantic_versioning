@@ -107,5 +107,23 @@ describe Fastlane::Actions::GetVersioningInfoAction do
         expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_truthy
       end
     end
+
+    context "when there are bug fix changes and a force type" do
+      let(:default_params) { map_default_params.merge(force_type: "major") }
+      let(:messages) do
+        [
+          "build: just build",
+          "fix: bugfix",
+          "fix(scope): scoped bugfix"
+        ]
+      end
+
+      it "increases major version number for next version" do
+        expect(subject).to be_truthy
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMP_TYPE]).to eq(:major)
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION]).to eq("1.0.0")
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_truthy
+      end
+    end
   end
 end

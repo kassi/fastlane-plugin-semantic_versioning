@@ -18,6 +18,7 @@ module Fastlane
         params[:allowed_types].map!(&:to_sym)
         params[:bump_map].transform_keys!(&:to_sym)
         params[:bump_map].transform_values!(&:to_sym)
+        params[:force_type] = params[:force_type]&.to_sym
 
         UI.message("The semantic_versioning plugin is working!")
 
@@ -29,7 +30,7 @@ module Fastlane
           allowed_types: params[:allowed_types]
         )
 
-        bump_type = Helper::SemanticVersioningHelper.bump_type(commits: commits, bump_map: params[:bump_map])
+        bump_type = Helper::SemanticVersioningHelper.bump_type(commits: commits, bump_map: params[:bump_map], force_type: params[:force_type])
         new_version = Helper::SemanticVersioningHelper.increase_version(current_version: current_version, bump_type: bump_type)
         new_changelog = Helper::SemanticVersioningHelper.build_changelog(version: new_version, commits: commits, type_map: params[:type_map])
         bumpable = current_version != new_version
@@ -88,6 +89,12 @@ module Fastlane
                                        default_value: { breaking: :major, feat: :minor, fix: :patch },
                                        is_string: false,
                                        verify_block: ->(value) { verify_bump_map(value) }),
+          FastlaneCore::ConfigItem.new(key: :force_type,
+                                       env_name: "SEMANTIC_VERSIONING_FORCE_TYPE",
+                                       description: "Force a minimum bump type",
+                                       optional: true,
+                                       default_value: nil,
+                                       type: String),
           FastlaneCore::ConfigItem.new(key: :tag_format,
                                        env_name: "SEMANTIC_VERSIONING_TAG_FORMAT",
                                        description: "The format for the git tag",
