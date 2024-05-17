@@ -37,11 +37,6 @@ module Fastlane
       def self.parse_conventional_commit(commit:, allowed_types:, bump_map:)
         types = allowed_types.join("|")
         commit.message.match(/^(?<type>#{types})(\((?<scope>\S+)\))?(?<major>!)?:\s+(?<subject>[^\n\r]+)(\z|\n\n(?<body>.*\z))/m) do |match|
-          unless allowed_types.include?(match[:type].to_sym)
-            UI.important("Commit #{commit.sha} has invalid type: #{match[:type]}. Ignoring")
-            break
-          end
-
           cc = {
             type: match[:type].to_sym,
             major: !!match[:major],
