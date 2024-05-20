@@ -2,19 +2,21 @@
 
 $LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
 
-require "simplecov"
-require "simplecov-lcov"
-SimpleCov::Formatter::LcovFormatter.config do |c|
-  c.output_directory = "coverage"
-  c.lcov_file_name = "lcov.info"
-  c.report_with_single_file = true
+if RSpec.configuration.instance_variable_get(:@files_or_directories_to_run) == %w[spec]
+  require "simplecov"
+  require "simplecov-lcov"
+  SimpleCov::Formatter::LcovFormatter.config do |c|
+    c.output_directory = "coverage"
+    c.lcov_file_name = "lcov.info"
+    c.report_with_single_file = true
+  end
+  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
+                                                                   SimpleCov::Formatter::HTMLFormatter,
+                                                                   SimpleCov::Formatter::LcovFormatter
+                                                                 ])
+  # SimpleCov.minimum_coverage 95
+  SimpleCov.start
 end
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
-                                                                 SimpleCov::Formatter::HTMLFormatter,
-                                                                 SimpleCov::Formatter::LcovFormatter
-                                                               ])
-# SimpleCov.minimum_coverage 95
-SimpleCov.start
 
 # This module is only used to check the environment is currently a testing env
 module SpecHelper
