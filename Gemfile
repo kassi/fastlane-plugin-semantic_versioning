@@ -18,6 +18,8 @@ gem "pry"
 gem "rake"
 # Behavior-driven testing tool for Ruby.
 gem "rspec"
+# Use test files in tests.
+gem "rspec-file_fixtures", "~> 0.1.9"
 # Formatter for RSpec to generate JUnit compatible reports.
 gem "rspec_junit_formatter"
 # A Ruby static code analyzer and formatter.

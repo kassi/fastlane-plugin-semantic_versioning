@@ -23,4 +23,5 @@ Gem::Specification.new do |spec|
   # since this would cause a circular dependency
 
   spec.add_dependency("git", "~> 2.0")
+  spec.add_dependency("xcodeproj", "~> 1.24")
 end

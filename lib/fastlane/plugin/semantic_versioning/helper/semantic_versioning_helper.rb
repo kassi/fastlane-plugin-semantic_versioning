@@ -3,6 +3,7 @@
 require "fastlane_core/ui/ui"
 require "fastlane/actions/get_version_number"
 require "git"
+require "xcodeproj"
 
 module Fastlane
   UI = FastlaneCore::UI unless Fastlane.const_defined?(:UI)
@@ -22,10 +23,6 @@ module Fastlane
 
       def self.formatted_tag(tag, format)
         format.sub("$version", tag)
-      end
-
-      def self.git_tag_exists?(tag)
-        git.tags.include?(tag)
       end
 
       # Retrieves git commits and returns them grouped by type
@@ -168,14 +165,53 @@ module Fastlane
           .sub("$new_version", Actions.lane_context[Actions::SharedValues::SEMVER_NEW_VERSION]))
       end
 
-      def self.git_command(args)
-        Actions.sh("git #{args.join(' ')}").chomp
-      end
-
       def self.git
         # rubocop:disable Style/ClassVars
         @@git ||= Git.open(".")
         # rubocop:enable Style/ClassVars
+      end
+
+      def self.git_tag_exists?(tag)
+        git.tags.include?(tag)
+      end
+
+      def self.project(path = nil)
+        # rubocop:disable Style/ClassVars
+        @@project ||= Xcodeproj::Project.open(path)
+        # rubocop:enable Style/ClassVars
+      end
+
+      def self.main_target
+        project.targets.first
+      end
+
+      def self.current_version
+        @current_version ||= main_target.build_configurations.first.build_settings["MARKETING_VERSION"] || "1.0"
+      end
+
+      def self.main_group(name = nil)
+        project.main_group[name || main_target.name]
+      end
+
+      def self.ensure_info_plist(path)
+        return if File.exist?(path)
+
+        File.write(path, <<-"PLIST")
+              <?xml version="1.0" encoding="UTF-8"?>
+              <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+              <plist version="1.0">
+              <dict>
+                <key>CFBundleVersion</key>
+                <string>#{current_version}</string>
+                <key>CFBundleShortVersionString</key>
+                <string>#{current_version}</string>
+              </dict>
+              </plist>
+        PLIST
+
+        info_plist = main_group.new_file("Info.plist")
+        main_target.add_file_references([info_plist])
+        Fastlane::UI.success("Successfully created the file '#{path}' for agvtool")
       end
     end
   end

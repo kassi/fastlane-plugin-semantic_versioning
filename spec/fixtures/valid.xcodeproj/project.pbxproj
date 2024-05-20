@@ -1,0 +1,202 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4B9780A485AC139326CB50A5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C406C4F4EB0A45F00E8CD66B /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		4973D2E3313FC0F3931EC89A /* Valid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Valid.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C406C4F4EB0A45F00E8CD66B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0D424BC785E36D1A350AB41A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B9780A485AC139326CB50A5 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2C7692F45589EB1F36CBC272 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4973D2E3313FC0F3931EC89A /* Valid.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		52A925B775CE6CB5C89FB508 /* Valid */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Valid;
+			path = Valid;
+			sourceTree = "<group>";
+		};
+		67C57F95E3A19BE4ABDF8B46 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				C406C4F4EB0A45F00E8CD66B /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		8315DC0E8A2C7C1FF7CD544B = {
+			isa = PBXGroup;
+			children = (
+				2C7692F45589EB1F36CBC272 /* Products */,
+				B8D7644E8C33AA479D7829A7 /* Frameworks */,
+				52A925B775CE6CB5C89FB508 /* Valid */,
+			);
+			sourceTree = "<group>";
+		};
+		B8D7644E8C33AA479D7829A7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				67C57F95E3A19BE4ABDF8B46 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0315D102AD15877A2747BBD7 /* Valid */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 224EEB813D07CEFC4A10DD65 /* Build configuration list for PBXNativeTarget "Valid" */;
+			buildPhases = (
+				736F2571BD781842B2E9F120 /* Sources */,
+				0D424BC785E36D1A350AB41A /* Frameworks */,
+				230799B9E2B651B474F83641 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Valid;
+			productName = Valid;
+			productReference = 4973D2E3313FC0F3931EC89A /* Valid.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E3B6751FD96B55A7F82B8B59 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = 828095B194E50A34DFA941A9 /* Build configuration list for PBXProject "valid" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 8315DC0E8A2C7C1FF7CD544B;
+			productRefGroup = 2C7692F45589EB1F36CBC272 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0315D102AD15877A2747BBD7 /* Valid */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		230799B9E2B651B474F83641 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		736F2571BD781842B2E9F120 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		100B0E436FA60DBA18E50FC3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4FF04054C64C0747A51AE1A6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+			};
+			name = Debug;
+		};
+		BFBBB029DD0E95430321286F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+			};
+			name = Release;
+		};
+		DFB5F5A619DCF400FEFEB195 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		224EEB813D07CEFC4A10DD65 /* Build configuration list for PBXNativeTarget "Valid" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DFB5F5A619DCF400FEFEB195 /* Release */,
+				100B0E436FA60DBA18E50FC3 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		828095B194E50A34DFA941A9 /* Build configuration list for PBXProject "valid" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4FF04054C64C0747A51AE1A6 /* Debug */,
+				BFBBB029DD0E95430321286F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E3B6751FD96B55A7F82B8B59 /* Project object */;
+}

@@ -2,6 +2,8 @@
 
 $LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
 
+require "rspec/file_fixtures"
+
 if RSpec.configuration.instance_variable_get(:@files_or_directories_to_run) == %w[spec]
   require "simplecov"
   require "simplecov-lcov"
