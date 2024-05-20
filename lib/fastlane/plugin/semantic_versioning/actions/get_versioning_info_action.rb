@@ -51,6 +51,7 @@ module Fastlane
         bumpable
       end
 
+      # :nocov:
       def self.description
         "Retrieve semantic versioning information from commit history."
       end
@@ -80,6 +81,7 @@ module Fastlane
         # Optional:
         "Reads commits from last version and determines next version and changelog."
       end
+      # :nocov:
 
       def self.available_options
         [
@@ -128,6 +130,7 @@ module Fastlane
         UI.user_error!("Parameter 'bump_map' must be a Hash.") unless value.is_a?(Hash)
       end
 
+      # :nocov:
       def self.is_supported?(_platform)
         # Adjust this if your plugin only works for a particular platform (iOS vs. Android, for example)
         # See: https://docs.fastlane.tools/advanced/#control-configuration-by-lane-and-by-platform
@@ -135,6 +138,7 @@ module Fastlane
         # [:ios, :mac, :android].include?(platform)
         true
       end
+      # :nocov:
     end
   end
 end
