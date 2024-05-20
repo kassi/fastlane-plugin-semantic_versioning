@@ -1,252 +1,121 @@
 ---
 require:
   - rubocop-performance
+  - rubocop-rspec
 
 AllCops:
-  Exclude:
-    - "**/*.provisionprofile"
-    - "**/lib/assets/DefaultFastfileTemplate"
-    - "**/lib/assets/MatchfileTemplate"
-    - "**/lib/assets/custom_action_template.rb"
-    - "**/spec/fixtures/broken_files/broken_file.rb"
-    - ./vendor/**/*
-  Include:
-    - "**/*.gemspec"
-    - "**/*.rb"
-    - "**/*file"
-    - "*/lib/assets/*Template"
-    - "*/lib/assets/*TemplateAndroid"
+  DisplayCopNames: true
+  DisplayStyleGuide: true
   NewCops: enable
   StyleGuideBaseURL: https://rubystyle.guide
   SuggestExtensions: false
   TargetRubyVersion: 2.6
 
 Bundler/OrderedGems:
-  Enabled: true
   TreatCommentsAsGroupSeparators: false
 
-Gemspec/DevelopmentDependencies:
-  Enabled: true
-  EnforcedStyle: Gemfile
-
-Layout/DotPosition:
-  Enabled: false
-
-Layout/FirstHashElementIndentation:
-  Enabled: false
-
-Layout/HashAlignment:
-  Enabled: false
-
-Layout/HeredocIndentation:
-  Enabled: false
+Layout/IndentationStyle:
+  IndentationWidth: 2
 
 Layout/LineLength:
-  Max: 370
-
-Layout/SpaceAroundOperators:
-  Exclude:
-    - "**/spec/actions_specs/xcodebuild_spec.rb"
-
-Lint/AmbiguousBlockAssociation:
-  Enabled: false
-
-Lint/ErbNewArguments:
-  Enabled: false
-
-Lint/ParenthesesAsGroupedExpression:
-  Exclude:
-    - "**/spec/**/*"
-
-Lint/SuppressedException:
-  Enabled: false
-
-Lint/UnusedBlockArgument:
-  Enabled: false
-
-Lint/UnusedMethodArgument:
-  Enabled: false
-
-Lint/UselessAssignment:
-  Exclude:
-    - "**/spec/**/*"
+  Max: 140
 
 Metrics/AbcSize:
   Enabled: false
 
 Metrics/BlockLength:
-  Enabled: false
+  AllowedMethods:
+    - context
+    - define
+    - describe
+    - factory
+    - group
+    - shared_examples
 
 Metrics/ClassLength:
   Max: 320
 
 Metrics/CyclomaticComplexity:
-  Enabled: false
+  Max: 8
 
 Metrics/MethodLength:
   Enabled: false
-
-Metrics/ModuleLength:
-  Enabled: false
-
-Metrics/ParameterLists:
-  Max: 17
 
 Metrics/PerceivedComplexity:
   Max: 10
 
 Naming/FileName:
   Exclude:
-    - "**/*.gemspec"
-    - "**/Brewfile"
-    - "**/Dangerfile"
-    - "**/Deliverfile"
-    - "**/Fastfile"
-    - "**/Gemfile"
-    - "**/Guardfile"
-    - "**/Pluginfile"
-    - "**/Podfile"
-    - "**/Rakefile"
-    - "**/Snapfile"
+    - Guardfile
 
 Naming/PredicateName:
   Enabled: false
 
-Naming/VariableNumber:
+RSpec/ContextWording:
+  Prefixes:
+    - and
+    - as
+    - for
+    - when
+    - with
+    - without
+
+RSpec/ExampleLength:
+  Max: 13
+
+RSpec/FilePath:
   Enabled: false
 
-Performance/RegexpMatch:
+RSpec/SpecFilePathFormat:
   Enabled: false
 
-Performance/StringReplacement:
+RSpec/MultipleExpectations:
+  Max: 7
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 6
+
+RSpec/NamedSubject:
   Enabled: false
 
-Style/AndOr:
-  Enabled: true
-  EnforcedStyle: conditionals
+RSpec/NestedGroups:
+  Max: 5
 
-Style/ClassAndModuleChildren:
+RSpec/VerifiedDoubles:
   Enabled: false
 
-Style/ClassCheck:
-  EnforcedStyle: kind_of?
+Style/BlockDelimiters:
+  EnforcedStyle: semantic
+  Exclude:
+    - spec/factories/*.rb
+  AllowedMethods:
+    - html
+    - let
+    - let!
+    - sequence
+    - subject
+    - watch
 
-Style/CollectionMethods:
-  Enabled: false
-
-Style/ConditionalAssignment:
+Style/Copyright:
   Enabled: false
 
 Style/Documentation:
   Enabled: false
 
-Style/DoubleNegation:
-  Enabled: false
-
 Style/EmptyMethod:
-  Enabled: false
+  EnforcedStyle: expanded
 
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
-Style/GlobalVars:
-  Enabled: false
-
-Style/GuardClause:
-  Enabled: false
-
-Style/IfInsideElse:
-  Enabled: false
-
-Style/IfUnlessModifier:
-  Enabled: false
+Style/FormatString:
+  EnforcedStyle: format
 
 Style/MethodCallWithArgsParentheses:
   AllowedMethods:
-    - after
-    - attr_accessor
-    - attr_reader
-    - be
-    - before
-    - command
-    - context
     - desc
-    - describe
-    - fastlane_require
-    - gem
-    - it
-    - lane
-    - not_to
-    - platform
-    - private_lane
-    - program
-    - raise
-    - require
-    - require_relative
-    - to
-  Enabled: true
 
-Style/MissingRespondToMissing:
-  Enabled: false
-
-Style/MixinGrouping:
+Style/MixinUsage:
   Exclude:
-    - "**/spec/**/*"
-
-Style/MultilineBlockChain:
-  Enabled: false
-
-Style/MultipleComparison:
-  Enabled: false
-
-Style/MutableConstant:
-  Enabled: false
-
-Style/NumericLiteralPrefix:
-  Enabled: false
-
-Style/NumericPredicate:
-  Enabled: false
-
-Style/PercentLiteralDelimiters:
-  Enabled: false
-
-Style/PerlBackrefs:
-  Enabled: false
-
-Style/QuotedSymbols:
-  Enabled: false
-
-Style/RedundantReturn:
-  Enabled: false
-
-Style/RedundantSelf:
-  Enabled: false
-
-Style/SafeNavigation:
-  Enabled: false
-
-Style/SignalException:
-  Enabled: false
-
-Style/SlicingWithRange:
-  Enabled: false
-
-Style/SpecialGlobalVars:
-  Enabled: false
+    - bin/setup
+    - bin/update
 
 Style/StringLiterals:
-  Enabled: true
   EnforcedStyle: double_quotes
-
-Style/SymbolArray:
-  Enabled: false
-
-Style/TernaryParentheses:
-  Enabled: false
-
-Style/WordArray:
-  MinSize: 19
-
-Style/ZeroLengthPredicate:
-  Enabled: false

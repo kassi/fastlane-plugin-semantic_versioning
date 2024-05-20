@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def raw_commit(message)
   indented_message = message.each_line.map { |e| "    #{e.chomp}" }.join("\n")
   header = <<-COMMIT.gsub("    ", "")
@@ -7,7 +9,7 @@ def raw_commit(message)
     committer Me <email@example.com> 1715848588 +0200
 
   COMMIT
-  return header + indented_message
+  header + indented_message
 end
 
 def map_default_params
@@ -31,9 +33,8 @@ describe Fastlane::Actions::GetVersioningInfoAction do
         double(stdout: messages.map { |message| raw_commit(message) }.join("\n"))
       }
       allow(Fastlane::Actions::GetVersionNumberAction).to receive(:run) { current_version }
-      allow(Fastlane::Actions).to receive(:sh).with("git rev-parse -q --verify refs/tags/v0.1.0", any_args) {
-        "26671545a3cc6b044fa5cfa93d31cc569786d933"
-      }
+      allow(Fastlane::Actions).to receive(:sh).with("git rev-parse -q --verify refs/tags/v0.1.0",
+                                                    any_args).and_return("26671545a3cc6b044fa5cfa93d31cc569786d933")
     end
 
     after do

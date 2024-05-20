@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source("https://rubygems.org")
 
 # Provides a consistent environment for Ruby projects by tracking and installing exact gem versions.

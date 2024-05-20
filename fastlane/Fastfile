@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 lane :bump do
   # First, get information about possible next bump
   if get_versioning_info

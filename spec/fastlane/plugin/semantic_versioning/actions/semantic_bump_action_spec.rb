@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def map_default_params
   described_class.available_options.select(&:optional).to_h { |e| [e.key, e.default_value] }
 end
@@ -21,13 +23,16 @@ describe Fastlane::Actions::SemanticBumpAction do
     context "when get_versioning_info reveals no bump needed" do
       before do
         Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE] = false
+        allow(Fastlane::UI).to receive(:message).with("No version bump detected.")
+        allow(Fastlane::Helper::SemanticVersioningHelper).to receive(:write_changelog)
+        allow(Fastlane::Actions::CommitVersionBumpAction).to receive(:run)
       end
 
       it "returns false and doesn't change anything" do
-        expect(Fastlane::UI).to receive(:message).with("No version bump detected.")
-        expect(Fastlane::Helper::SemanticVersioningHelper).not_to receive(:write_changelog)
-        expect(Fastlane::Actions::CommitVersionBumpAction).not_to receive(:run)
         expect(subject).to be_falsy
+        expect(Fastlane::UI).to have_received(:message).with("No version bump detected.")
+        expect(Fastlane::Helper::SemanticVersioningHelper).not_to have_received(:write_changelog)
+        expect(Fastlane::Actions::CommitVersionBumpAction).not_to have_received(:run)
       end
     end
 
@@ -38,18 +43,20 @@ describe Fastlane::Actions::SemanticBumpAction do
         Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION] = "0.2.0"
 
         allow(Fastlane::Actions).to receive(:sh) { |*args|
-          if args[0] =~ /agvtool what-marketing-version -terse1$/
+          if /agvtool what-marketing-version -terse1$/.match?(args[0])
             "agvtool what-marketing-version -terse1\n0.1.0"
           elsif args[0] == "git rev-parse --show-toplevel"
             "/path/to/project"
           end
         }
+        allow(Fastlane::Helper::SemanticVersioningHelper).to receive(:write_changelog)
+        allow(Fastlane::Actions::CommitVersionBumpAction).to receive(:run)
       end
 
       it "returns true and updated version and changelog" do
-        expect(Fastlane::Helper::SemanticVersioningHelper).to receive(:write_changelog)
-        expect(Fastlane::Actions::CommitVersionBumpAction).to receive(:run)
         expect(subject).to be_truthy
+        expect(Fastlane::Helper::SemanticVersioningHelper).to have_received(:write_changelog)
+        expect(Fastlane::Actions::CommitVersionBumpAction).to have_received(:run)
       end
     end
   end

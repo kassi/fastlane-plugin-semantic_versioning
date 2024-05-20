@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 require "fastlane/plugin/semantic_versioning/version"
 
 module Fastlane
+  # Provides actions for dealing with semantic versions and conventional commits
   module SemanticVersioning
     # Return all .rb files inside the "actions" and "helper" directory
     def self.all_classes

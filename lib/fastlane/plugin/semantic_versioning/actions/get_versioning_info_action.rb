@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "fastlane/action"
 require "fastlane_core/configuration/config_item"
 require_relative "../helper/semantic_versioning_helper"
@@ -13,6 +15,7 @@ module Fastlane
       SEMVER_BUMPABLE = :SEMVER_BUMPABLE
     end
 
+    # Action to retrieve semantic versioning information from commit history.
     class GetVersioningInfoAction < Action
       def self.run(params)
         params[:allowed_types].map!(&:to_sym)
@@ -32,8 +35,10 @@ module Fastlane
         )
 
         bump_type = Helper::SemanticVersioningHelper.bump_type(commits: commits, force_type: params[:force_type])
-        new_version = Helper::SemanticVersioningHelper.increase_version(current_version: current_version, bump_type: bump_type)
-        new_changelog = Helper::SemanticVersioningHelper.build_changelog(version: new_version, commits: commits, type_map: params[:type_map])
+        new_version = Helper::SemanticVersioningHelper.increase_version(current_version: current_version,
+                                                                        bump_type: bump_type)
+        new_changelog = Helper::SemanticVersioningHelper.build_changelog(version: new_version, commits: commits,
+                                                                         type_map: params[:type_map])
         bumpable = current_version != new_version
 
         Actions.lane_context[SharedValues::SEMVER_CURRENT_VERSION] = current_version
@@ -43,7 +48,7 @@ module Fastlane
         Actions.lane_context[SharedValues::SEMVER_NEW_CHANGELOG] = new_changelog
         Actions.lane_context[SharedValues::SEMVER_BUMPABLE] = bumpable
 
-        return bumpable
+        bumpable
       end
 
       def self.description
@@ -82,7 +87,8 @@ module Fastlane
                                        env_name: "SEMANTIC_VERSIONING_ALLOWED_TYPES",
                                        description: "List of allowed commit types",
                                        optional: true,
-                                       default_value: %w[build ci docs feat fix perf refactor style test chore revert bump init],
+                                       default_value: %w[build ci docs feat fix perf refactor style test chore revert
+                                                         bump init],
                                        type: Array),
           FastlaneCore::ConfigItem.new(key: :bump_map,
                                        description: "Map of commit types to their bump level (major, minor, patch)",
@@ -107,23 +113,22 @@ module Fastlane
                                        description: "Map of types to section titles for the changelog." \
                                                     "Only the specified types will be used for the changelog",
                                        optional: true,
-                                       default_value: { breaking: "BREAKING CHANGES", feat: "Features", fix: "Bug Fixes" },
+                                       default_value: { breaking: "BREAKING CHANGES", feat: "Features",
+                                                        fix: "Bug Fixes" },
                                        is_string: false,
                                        verify_block: ->(value) { verify_type_map(value) })
         ]
       end
 
       def self.verify_type_map(value)
-        UI.user_error!("Parameter 'type_map' must be a Hash.") unless value.kind_of?(Hash)
-        # It could be helpful to also test for valid keys, which must all be part of ConfigItem :allowed_types plus breaking.
-        # How to check this?
+        UI.user_error!("Parameter 'type_map' must be a Hash.") unless value.is_a?(Hash)
       end
 
       def self.verify_bump_map(value)
-        UI.user_error!("Parameter 'bump_map' must be a Hash.") unless value.kind_of?(Hash)
+        UI.user_error!("Parameter 'bump_map' must be a Hash.") unless value.is_a?(Hash)
       end
 
-      def self.is_supported?(platform)
+      def self.is_supported?(_platform)
         # Adjust this if your plugin only works for a particular platform (iOS vs. Android, for example)
         # See: https://docs.fastlane.tools/advanced/#control-configuration-by-lane-and-by-platform
         #

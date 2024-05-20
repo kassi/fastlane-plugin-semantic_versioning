@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require "fastlane/action"
 require_relative "../helper/semantic_versioning_helper"
 
 module Fastlane
   module Actions
+    # Action to bumps the version according to semantic versioning and writes a changelog.
     class SemanticBumpAction < Action
       def self.run(params)
         unless Actions.lane_context.key?(SharedValues::SEMVER_BUMPABLE)
@@ -32,9 +35,10 @@ module Fastlane
           include: [params[:changelog_file]].compact
         )
 
-        return true
+        true
       end
 
+      # :nocov:
       def self.description
         "Bumps the version according to semantic versioning and writes a changelog."
       end
@@ -56,6 +60,7 @@ module Fastlane
         # Optional:
         "Reads commits from last version and determines next version and changelog."
       end
+      # :nocov:
 
       def self.available_options
         [
@@ -74,7 +79,7 @@ module Fastlane
         ]
       end
 
-      def self.is_supported?(platform)
+      def self.is_supported?(_platform)
         # Adjust this if your plugin only works for a particular platform (iOS vs. Android, for example)
         # See: https://docs.fastlane.tools/advanced/#control-configuration-by-lane-and-by-platform
         #

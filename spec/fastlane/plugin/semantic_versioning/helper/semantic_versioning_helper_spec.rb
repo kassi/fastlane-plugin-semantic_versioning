@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "git"
 
 def raw_commit(message)
@@ -9,12 +11,14 @@ def raw_commit(message)
     committer Me <email@example.com> 1715848588 +0200
 
   COMMIT
-  return header + indented_message
+  header + indented_message
 end
 
 describe Fastlane::Helper::SemanticVersioningHelper do
   describe ".parse_conventional_commit" do
-    subject { described_class.parse_conventional_commit(commit: commit, allowed_types: allowed_types, bump_map: bump_map) }
+    subject {
+      described_class.parse_conventional_commit(commit: commit, allowed_types: allowed_types, bump_map: bump_map)
+    }
 
     let(:allowed_types) { %i[build ci docs feat fix perf refactor style test chore revert bump init] }
     let(:bump_map) { { breaking: :major, feat: :minor, fix: :patch } }
@@ -85,7 +89,9 @@ describe Fastlane::Helper::SemanticVersioningHelper do
     end
 
     context "when the commit is a valid message with body and breaking change" do
-      let(:message) { "feat(my-scope): add new feature\n\nThis is the body\nCloses: #42\n\nBREAKING CHANGE: It barfs everything" }
+      let(:message) {
+        "feat(my-scope): add new feature\n\nThis is the body\nCloses: #42\n\nBREAKING CHANGE: It barfs everything"
+      }
 
       it "returns the correct hash, setting breaking change message" do
         expect(subject).not_to be_nil

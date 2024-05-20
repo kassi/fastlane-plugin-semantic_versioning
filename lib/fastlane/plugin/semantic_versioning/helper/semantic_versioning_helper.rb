@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "fastlane_core/ui/ui"
 require "fastlane/actions/get_version_number"
 require "git"
@@ -29,9 +31,9 @@ module Fastlane
       # Retrieves git commits and returns them grouped by type
       def self.git_commits(from:, allowed_types:, bump_map:)
         logs = from ? git.log(-1).between(from) : git.log(-1)
-        logs.reverse_each.map do |commit|
+        logs.reverse_each.filter_map { |commit|
           parse_conventional_commit(commit: commit, allowed_types: allowed_types, bump_map: bump_map)
-        end.compact
+        }
       end
 
       def self.parse_conventional_commit(commit:, allowed_types:, bump_map:)
@@ -39,7 +41,7 @@ module Fastlane
         commit.message.match(/^(?<type>#{types})(\((?<scope>\S+)\))?(?<major>!)?:\s+(?<subject>[^\n\r]+)(\z|\n\n(?<body>.*\z))/m) do |match|
           cc = {
             type: match[:type].to_sym,
-            major: !!match[:major],
+            major: !match[:major].nil?,
             scope: match[:scope],
             subject: match[:subject],
             body: match[:body],
@@ -62,7 +64,7 @@ module Fastlane
 
         return bump_map[:breaking] if commit[:breaking]
 
-        return bump_map[commit[:type]]
+        bump_map[commit[:type]]
       end
 
       def self.bump_type(commits:, force_type: nil)
@@ -83,7 +85,7 @@ module Fastlane
           end
         end
 
-        return result
+        result
       end
 
       def self.group_commits(commits:, allowed_types:)
@@ -91,9 +93,7 @@ module Fastlane
         result[:none] = []
 
         commits.each do |commit|
-          if commit[:breaking] && allowed_types.include?(:breaking)
-            result[:breaking] << commit
-          end
+          result[:breaking] << commit if commit[:breaking] && allowed_types.include?(:breaking)
 
           if commit[:major] && !allowed_types.include?(commit[:type])
             result[:none] << commit
@@ -105,7 +105,7 @@ module Fastlane
           result[commit[:type]] << commit
         end
 
-        return result
+        result
       end
 
       def self.increase_version(current_version:, bump_type:)
@@ -122,7 +122,7 @@ module Fastlane
           version_array[2] += 1
         end
 
-        return version_array.join(".")
+        version_array.join(".")
       end
 
       # Builds and returns th changelog for the upcoming release.
@@ -147,7 +147,7 @@ module Fastlane
           lines << ""
         end
 
-        return "#{lines.join("\n")}\n"
+        "#{lines.join("\n")}\n"
       end
 
       def self.write_changelog(path:, changelog:)
