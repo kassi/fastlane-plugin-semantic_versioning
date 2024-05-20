@@ -1,3 +1,13 @@
+## 2.1.0 (2024-05-20)
+
+### Features
+
+- add prepare_versioning action for xcode projects
+
+### Refactorings
+
+- cleanup
+
 ## 2.0.0 (2024-05-18)
 
 ### BREAKING CHANGE
