@@ -1,3 +1,17 @@
+## 3.0.0 (2024-05-21)
+
+### BREAKING CHANGE
+
+- changes the default behavior of the actions to use manual instead of apple-generic versioning system
+
+### Bug fixes
+
+- plugin incorrecly reported android as being supported
+
+### Features
+
+- add option to use manual versioning system inside xcodeproj
+
 ## 2.1.1 (2024-05-21)
 
 ### Bug fixes
