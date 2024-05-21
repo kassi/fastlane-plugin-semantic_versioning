@@ -13,6 +13,7 @@ module Fastlane
       SEMVER_NEW_VERSION = :SEMVER_NEW_VERSION
       SEMVER_NEW_CHANGELOG = :SEMVER_NEW_CHANGELOG
       SEMVER_BUMPABLE = :SEMVER_BUMPABLE
+      SEMVER_VERSIONING_SYSTEM = :SEMVER_VERSIONING_SYSTEM
     end
 
     # Action to retrieve semantic versioning information from commit history.
@@ -23,9 +24,13 @@ module Fastlane
         params[:bump_map].transform_values!(&:to_sym)
         params[:force_type] = params[:force_type]&.to_sym
 
-        UI.message("The semantic_versioning plugin is working!")
+        verify_type_map(params[:type_map])
+        verify_bump_map(params[:bump_map])
+        Helper::SemanticVersioningHelper.verify_versioning_system(params[:versioning_system])
 
-        current_version = Helper::SemanticVersioningHelper.version_number
+        system = lane_context[SharedValues::SEMVER_VERSIONING_SYSTEM] = params[:versioning_system]
+
+        current_version = Helper::SemanticVersioningHelper.version_number(system: system)
         formatted_tag = Helper::SemanticVersioningHelper.formatted_tag(current_version, params[:tag_format])
 
         commits = Helper::SemanticVersioningHelper.git_commits(
@@ -68,7 +73,8 @@ module Fastlane
           ["SEMVER_BUMP_TYPE", "Type of version bump. One of major, minor, or patch"],
           ["SEMVER_NEW_VERSION", "New version that would have to be set from current version and commits"],
           ["SEMVER_NEW_CHANGELOG", "New changelog section for the new bump"],
-          ["SEMVER_BUMPABLE", "True if a version bump is possible"]
+          ["SEMVER_BUMPABLE", "True if a version bump is possible"],
+          ["SEMVER_VERSIONING_SYSTEM", "The versioning system used"]
         ]
       end
 
@@ -118,7 +124,16 @@ module Fastlane
                                        default_value: { breaking: "BREAKING CHANGES", feat: "Features",
                                                         fix: "Bug Fixes" },
                                        is_string: false,
-                                       verify_block: ->(value) { verify_type_map(value) })
+                                       verify_block: ->(value) { verify_type_map(value) }),
+          FastlaneCore::ConfigItem.new(key: :versioning_system,
+                                       env_name: "SEMANTIC_VERSIONING_VERSIONING_SYSTEM",
+                                       description: "Type of versioning to use. Can be 'manual' or 'apple-generic'." \
+                                                    "For 'apple-generic', the project has to be prepared with prepare_versioning." \
+                                                    "Defaults to 'manual'",
+                                       optional: true,
+                                       default_value: "manual",
+                                       is_string: true,
+                                       verify_block: ->(value) { Helper::SemanticVersioningHelper.verify_versioning_system(value) })
         ]
       end
 

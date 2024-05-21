@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
   # Don't add a dependency to fastlane or fastlane_re
   # since this would cause a circular dependency
 
+  spec.add_dependency("fastlane-plugin-versioning", "~> 0.5")
   spec.add_dependency("git", "~> 2.0")
   spec.add_dependency("xcodeproj", "~> 1.24")
 end

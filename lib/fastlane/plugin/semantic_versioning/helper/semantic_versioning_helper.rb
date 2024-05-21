@@ -2,6 +2,7 @@
 
 require "fastlane_core/ui/ui"
 require "fastlane/actions/get_version_number"
+require "fastlane/plugin/versioning"
 require "git"
 require "xcodeproj"
 
@@ -13,12 +14,27 @@ module Fastlane
       # class methods that you define here become available in your action
       # as `Helper::SemanticVersioningHelper.your_method`
       #
-      def self.show_message
-        UI.message("Hello from the semantic_versioning plugin helper!")
+      def self.version_number(system:)
+        if system == "apple-generic"
+          Actions::GetVersionNumberAction.run({})
+        else
+          Actions::GetVersionNumberFromXcodeprojAction.run({})
+        end
       end
 
-      def self.version_number
-        Actions::GetVersionNumberAction.run({})
+      def self.set_version_number(version_number:, system:)
+        if system == "apple-generic"
+          Fastlane::Actions::IncrementVersionNumberAction.run(version_number: version_number)
+        else
+          Actions::IncrementVersionNumberInXcodeprojAction.run(version_number: version_number)
+        end
+      end
+
+      def self.verify_versioning_system(value)
+        allowed = %w[apple-generic manual]
+        return if allowed.include?(value)
+
+        UI.user_error!("'versioning_system' must be one of #{allowed}")
       end
 
       def self.formatted_tag(tag, format)
@@ -183,10 +199,6 @@ module Fastlane
 
       def self.main_target
         project.targets.first
-      end
-
-      def self.current_version
-        @current_version ||= main_target.build_configurations.first.build_settings["MARKETING_VERSION"] || "1.0"
       end
 
       def self.main_group(name = nil)

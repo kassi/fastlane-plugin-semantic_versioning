@@ -8,19 +8,22 @@ module Fastlane
     # Action to bumps the version according to semantic versioning and writes a changelog.
     class SemanticBumpAction < Action
       def self.run(params)
-        unless Actions.lane_context.key?(SharedValues::SEMVER_BUMPABLE)
+        unless Actions.lane_context.key?(SharedValues::SEMVER_BUMPABLE) && Actions.lane_context.key?(SharedValues::SEMVER_VERSIONING_SYSTEM)
           UI.user_error!("No semver information found. Please run get_versioning_info beforehand.")
         end
+
+        Helper::SemanticVersioningHelper.verify_versioning_system(Actions.lane_context[SharedValues::SEMVER_VERSIONING_SYSTEM])
 
         unless Actions.lane_context[SharedValues::SEMVER_BUMPABLE]
           UI.message("No version bump detected.")
           return false
         end
 
+        system = Actions.lane_context[SharedValues::SEMVER_VERSIONING_SYSTEM]
         version_number = Actions.lane_context[SharedValues::SEMVER_NEW_VERSION]
         next_changelog = Actions.lane_context[SharedValues::SEMVER_NEW_CHANGELOG]
 
-        Fastlane::Actions::IncrementVersionNumberAction.run(version_number: version_number)
+        Helper::SemanticVersioningHelper.set_version_number(version_number: version_number, system: system)
 
         if params[:changelog_file]
           Helper::SemanticVersioningHelper.write_changelog(
@@ -75,7 +78,16 @@ module Fastlane
                                        description: "Filename for the changelog",
                                        optional: true,
                                        default_value: "CHANGELOG.md",
-                                       type: String)
+                                       type: String),
+          FastlaneCore::ConfigItem.new(key: :versioning_system,
+                                       env_name: "SEMANTIC_VERSIONING_VERSIONING_SYSTEM",
+                                       description: "Type of versioning to use. Can be 'manual' or 'apple-generic'." \
+                                                    "For 'apple-generic', the project has to be prepared with prepare_versioning." \
+                                                    "Defaults to 'manual'",
+                                       optional: true,
+                                       default_value: "manual",
+                                       is_string: true,
+                                       verify_block: ->(value) { Helper::SemanticVersioningHelper.verify_versioning_system(value) })
         ]
       end
 
