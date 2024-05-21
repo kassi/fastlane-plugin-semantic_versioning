@@ -1,3 +1,9 @@
+## 2.1.1 (2024-05-21)
+
+### Bug fixes
+
+- prepare_versioning action leaves unbuildable xcode project
+
 ## 2.1.0 (2024-05-20)
 
 ### Features
