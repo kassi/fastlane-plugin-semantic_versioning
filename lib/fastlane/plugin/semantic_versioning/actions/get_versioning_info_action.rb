@@ -145,14 +145,12 @@ module Fastlane
         UI.user_error!("Parameter 'bump_map' must be a Hash.") unless value.is_a?(Hash)
       end
 
-      # :nocov:
-      def self.is_supported?(_platform)
+      def self.is_supported?(platform)
         # Adjust this if your plugin only works for a particular platform (iOS vs. Android, for example)
         # See: https://docs.fastlane.tools/advanced/#control-configuration-by-lane-and-by-platform
         #
         %i[ios mac].include?(platform)
       end
-      # :nocov:
     end
   end
 end

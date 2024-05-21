@@ -80,4 +80,32 @@ describe Fastlane::Actions::SemanticBumpAction do
       end
     end
   end
+
+  describe ".is_supported?" do
+    subject { described_class.is_supported?(platform) }
+
+    context "when platform is ios" do
+      let(:platform) { :ios }
+
+      it "returns true" do
+        expect(subject).to be_truthy
+      end
+    end
+
+    context "when platform is mac" do
+      let(:platform) { :mac }
+
+      it "returns true" do
+        expect(subject).to be_truthy
+      end
+    end
+
+    context "when platform is android" do
+      let(:platform) { :android }
+
+      it "returns false" do
+        expect(subject).to be_falsy
+      end
+    end
+  end
 end

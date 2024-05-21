@@ -84,14 +84,12 @@ module Fastlane
         ]
       end
 
-      # :nocov:
       def self.is_supported?(platform)
         # Adjust this if your plugin only works for a particular platform (iOS vs. Android, for example)
         # See: https://docs.fastlane.tools/advanced/#control-configuration-by-lane-and-by-platform
         #
         %i[ios mac].include?(platform)
       end
-      # :nocov:
     end
   end
 end
