@@ -1,3 +1,9 @@
+## 3.0.1 (2024-05-21)
+
+### Bug fixes
+
+- error when checking if plugin is supported for some actions
+
 ## 3.0.0 (2024-05-21)
 
 ### BREAKING CHANGE
