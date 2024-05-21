@@ -123,6 +123,7 @@ module Fastlane
 
       def self.increase_version(current_version:, bump_type:)
         version_array = current_version.split(".").map(&:to_i)
+        version_array = version_array.unshift(0, 0)[-3..] # pad from left with zeros when version is not 3-digits.
 
         case bump_type
         when :major

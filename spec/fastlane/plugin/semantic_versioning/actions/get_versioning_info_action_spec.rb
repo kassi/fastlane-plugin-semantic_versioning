@@ -61,6 +61,37 @@ describe Fastlane::Actions::GetVersioningInfoAction do
           expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_BUMPABLE]).to be_falsy
         end
 
+        context "when the version number is default 2-digit" do
+          let(:current_version) { "1.0" }
+
+          context "when a major bump is triggered" do
+            let(:messages) { ["bump!: first official release"] }
+
+            it "jumps to 1.0.0" do
+              expect(subject).to be_truthy
+              expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION]).to eq("1.0.0")
+            end
+          end
+
+          context "when a minor bump is triggered" do
+            let(:messages) { ["feat: my feature"] }
+
+            it "jumps to 0.2.0" do
+              expect(subject).to be_truthy
+              expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION]).to eq("0.2.0")
+            end
+          end
+
+          context "when a patch bump is triggered" do
+            let(:messages) { ["fix: my fix"] }
+
+            it "jumps to 0.1.1" do
+              expect(subject).to be_truthy
+              expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION]).to eq("0.1.1")
+            end
+          end
+        end
+
         context "when there are breaking changes" do
           let(:messages) do
             [

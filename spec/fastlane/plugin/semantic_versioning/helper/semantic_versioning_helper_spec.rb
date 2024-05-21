@@ -358,4 +358,64 @@ describe Fastlane::Helper::SemanticVersioningHelper do
       # rubocop:enable RSpec/ExampleLength
     end
   end
+
+  describe ".increase_version" do
+    subject { described_class.increase_version(current_version: current_version, bump_type: bump_type) }
+
+    context "when current version is semver" do
+      let(:current_version) { "1.2.3" }
+
+      context "when bump type is major" do
+        let(:bump_type) { :major }
+
+        it "returns the correct version" do
+          expect(subject).to eq("2.0.0")
+        end
+      end
+
+      context "when bump type is minor" do
+        let(:bump_type) { :minor }
+
+        it "returns the correct version" do
+          expect(subject).to eq("1.3.0")
+        end
+      end
+
+      context "when bump type is patch" do
+        let(:bump_type) { :patch }
+
+        it "returns the correct version" do
+          expect(subject).to eq("1.2.4")
+        end
+      end
+    end
+
+    context "when current version is standard xcode format" do
+      let(:current_version) { "1.0" }
+
+      context "when bump type is major" do
+        let(:bump_type) { :major }
+
+        it "returns the correct version" do
+          expect(subject).to eq("1.0.0")
+        end
+      end
+
+      context "when bump type is minor" do
+        let(:bump_type) { :minor }
+
+        it "returns the correct version" do
+          expect(subject).to eq("0.2.0")
+        end
+      end
+
+      context "when bump type is patch" do
+        let(:bump_type) { :patch }
+
+        it "returns the correct version" do
+          expect(subject).to eq("0.1.1")
+        end
+      end
+    end
+  end
 end
