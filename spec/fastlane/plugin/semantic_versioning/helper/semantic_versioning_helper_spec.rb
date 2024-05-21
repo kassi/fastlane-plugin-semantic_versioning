@@ -273,4 +273,89 @@ describe Fastlane::Helper::SemanticVersioningHelper do
       end
     end
   end
+
+  describe ".ensure_info_plist" do
+    subject { described_class.ensure_info_plist(path) }
+
+    let(:path) { "MyGroup/Info.plist" }
+    let(:xcodeproj_file) { fixture("Valid.xcodeproj") }
+
+    context "when Info.plist exists" do
+      before do
+        allow(File).to receive(:exist?).with(path).and_return(true)
+        allow(File).to receive(:write)
+      end
+
+      it "does not touch and file" do
+        subject
+        expect(File).not_to have_received(:write)
+      end
+    end
+
+    context "when Info.plist does not exists" do
+      let(:project) { described_class.project(xcodeproj_file) }
+
+      before do
+        project
+        allow(File).to receive(:exist?).with(path).and_return(false)
+        allow(File).to receive(:write)
+        subject
+      end
+
+      it "writes a new file with content" do
+        expect(File).to have_received(:write).with(path, match(/<plist version=/))
+      end
+
+      # rubocop:disable RSpec/ExampleLength
+      it "adds a file reference to xcodeproj's main group" do
+        expect(project.to_tree_hash).to match(hash_including(
+                                                "rootObject" => hash_including(
+                                                  "mainGroup" => hash_including(
+                                                    "children" => include(
+                                                      hash_including(
+                                                        "displayName" => "Valid",
+                                                        "children" => include(
+                                                          "displayName" => "Info.plist",
+                                                          "isa" => "PBXFileReference",
+                                                          "path" => "Info.plist",
+                                                          "sourceTree" => "<group>",
+                                                          "lastKnownFileType" => "text.plist"
+                                                        )
+                                                      )
+                                                    )
+                                                  )
+                                                )
+                                              ))
+      end
+
+      it "adds a INFOPLIST_FILE to each build_setting" do
+        expect(project.to_tree_hash).to match(hash_including(
+                                                "rootObject" => hash_including(
+                                                  "targets" => include(
+                                                    hash_including(
+                                                      "displayName" => "Valid",
+                                                      "buildConfigurationList" => hash_including(
+                                                        "buildConfigurations" => include(
+                                                          hash_including({
+                                                                           "name" => "Release",
+                                                                           "buildSettings" => hash_including(
+                                                                             "INFOPLIST_FILE" => "Valid/Info.plist"
+                                                                           )
+                                                                         }),
+                                                          hash_including(
+                                                            "name" => "Debug",
+                                                            "buildSettings" => hash_including(
+                                                              "INFOPLIST_FILE" => "Valid/Info.plist"
+                                                            )
+                                                          )
+                                                        )
+                                                      )
+                                                    )
+                                                  )
+                                                )
+                                              ))
+      end
+      # rubocop:enable RSpec/ExampleLength
+    end
+  end
 end

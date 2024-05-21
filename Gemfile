@@ -4,6 +4,8 @@ source("https://rubygems.org")
 
 # Provides a consistent environment for Ruby projects by tracking and installing exact gem versions.
 gem "bundler"
+# Provides a fake file system to test diverse file operations
+gem "fakefs", "~> 2.5"
 # Automation tool for mobile developers.
 gem "fastlane", ">= 2.220.0"
 # Provides fast development by watching and automatically running tests.
@@ -30,6 +32,7 @@ gem "rubocop-performance"
 gem "rubocop-rspec"
 # SimpleCov is a code coverage analysis tool for Ruby.
 gem "simplecov"
+# Provide coverage information in LCOV style to be read by code editor
 gem "simplecov-lcov"
 
 gemspec

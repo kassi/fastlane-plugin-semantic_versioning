@@ -5,7 +5,7 @@ require "xcodeproj"
 
 fixtures_path = File.expand_path(File.join(File.dirname(__FILE__), "../../../../fixtures"))
 
-valid_project = Xcodeproj::Project.new("#{fixtures_path}/valid.xcodeproj")
+valid_project = Xcodeproj::Project.new("#{fixtures_path}/Valid.xcodeproj")
 valid_project.new_target(:application, "Valid", :ios)
 valid_project.new_group("Valid", "Valid")
 debug = valid_project.add_build_configuration("Debug", :debug)

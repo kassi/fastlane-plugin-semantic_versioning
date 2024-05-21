@@ -196,22 +196,21 @@ module Fastlane
       def self.ensure_info_plist(path)
         return if File.exist?(path)
 
-        File.write(path, <<-"PLIST")
-              <?xml version="1.0" encoding="UTF-8"?>
-              <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-              <plist version="1.0">
-              <dict>
-                <key>CFBundleVersion</key>
-                <string>#{current_version}</string>
-                <key>CFBundleShortVersionString</key>
-                <string>#{current_version}</string>
-              </dict>
-              </plist>
+        File.write(path, <<-PLIST)
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+          </dict>
+          </plist>
         PLIST
 
         info_plist = main_group.new_file("Info.plist")
-        main_target.add_file_references([info_plist])
-        Fastlane::UI.success("Successfully created the file '#{path}' for agvtool")
+        info_plist.include_in_index = nil
+        info_plist.set_last_known_file_type("text.plist")
+        main_target.build_configurations.each do |config|
+          config.build_settings["INFOPLIST_FILE"] = info_plist.full_path.to_s
+        end
       end
     end
   end

@@ -19,15 +19,20 @@ module Fastlane
         info_plist_file = File.join(main_group.path, "Info.plist")
         info_plist_path = File.join(project.path.dirname, info_plist_file)
 
+        current_version = Fastlane::Actions::GetVersionNumberAction.run(xcodeproj: xcodeproj_path)
+        Helper::SemanticVersioningHelper.ensure_info_plist(info_plist_path)
+        %w[CFBundleVersion CFBundleShortVersionString].each do |key|
+          unless Fastlane::Actions::GetInfoPlistValueAction.run(path: info_plist_path, key: key)
+            Fastlane::Actions::SetInfoPlistValueAction.run(path: info_plist_path, key: key, value: current_version)
+          end
+        end
+
         target.build_configurations.each do |config|
           config.build_settings["VERSIONING_SYSTEM"] = "apple-generic"
           config.build_settings.delete("MARKETING_VERSION")
           config.build_settings.delete("GENERATE_INFOPLIST_FILE")
-
-          config.build_settings["INFOPLIST_FILE"] = info_plist_file unless config.build_settings["INFOPLIST_FILE"]
-
-          Helper::SemanticVersioningHelper.ensure_info_plist(info_plist_path)
         end
+
         project.save
         true
       end
