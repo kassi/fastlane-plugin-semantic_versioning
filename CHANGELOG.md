@@ -1,3 +1,9 @@
+## 3.1.0 (2024-06-04)
+
+### Features
+
+- add update parameter to allow rewriting changelog on current release branch
+
 ## 3.0.2 (2024-05-21)
 
 ### Bug fixes
