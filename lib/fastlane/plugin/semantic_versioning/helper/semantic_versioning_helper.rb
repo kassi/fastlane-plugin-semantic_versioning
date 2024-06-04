@@ -2,6 +2,7 @@
 
 require "fastlane_core/ui/ui"
 require "fastlane/actions/get_version_number"
+require "fastlane/actions/last_git_tag"
 require "fastlane/plugin/versioning"
 require "git"
 require "xcodeproj"
@@ -14,11 +15,11 @@ module Fastlane
       # class methods that you define here become available in your action
       # as `Helper::SemanticVersioningHelper.your_method`
       #
-      def self.version_number(system:)
+      def self.version_number(system:, target:)
         if system == "apple-generic"
           Actions::GetVersionNumberAction.run({})
         else
-          Actions::GetVersionNumberFromXcodeprojAction.run({})
+          Actions::GetVersionNumberFromXcodeprojAction.run(target: target)
         end
       end
 
@@ -27,6 +28,16 @@ module Fastlane
           Fastlane::Actions::IncrementVersionNumberAction.run(version_number: version_number)
         else
           Actions::IncrementVersionNumberInXcodeprojAction.run(version_number: version_number)
+        end
+      end
+
+      def self.previous_version(tag_format:)
+        tag = Fastlane::Actions::LastGitTagAction.run(pattern: tag_format.sub("$version", "[0-9].[0-9].[0-9]"))
+        return "0.0.0" if tag.empty?
+
+        regex = tag_format.sub("$version", "(?<version>\\d+\\.\\d+\\.\\d+)")
+        tag.match(regex) do |match|
+          return match[:version]
         end
       end
 

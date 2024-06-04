@@ -29,8 +29,13 @@ module Fastlane
         Helper::SemanticVersioningHelper.verify_versioning_system(params[:versioning_system])
 
         system = lane_context[SharedValues::SEMVER_VERSIONING_SYSTEM] = params[:versioning_system]
+        target = params[:target]
 
-        current_version = Helper::SemanticVersioningHelper.version_number(system: system)
+        current_version = if params[:update]
+                            Helper::SemanticVersioningHelper.previous_version(tag_format: params[:tag_format])
+                          else
+                            Helper::SemanticVersioningHelper.version_number(system: system, target: target)
+                          end
         formatted_tag = Helper::SemanticVersioningHelper.formatted_tag(current_version, params[:tag_format])
 
         commits = Helper::SemanticVersioningHelper.git_commits(
@@ -116,6 +121,11 @@ module Fastlane
                                        optional: true,
                                        default_value: "$version",
                                        type: String),
+          FastlaneCore::ConfigItem.new(key: :target,
+                                       env_name: "SEMANTIC_VERSIONING_TARGET",
+                                       description: "Name of the target to use for manual versioning system",
+                                       optional: true,
+                                       type: String),
           FastlaneCore::ConfigItem.new(key: :type_map,
                                        env_name: "SEMANTIC_VERSIONING_TYPE_MAP",
                                        description: "Map of types to section titles for the changelog." \
@@ -125,6 +135,14 @@ module Fastlane
                                                         fix: "Bug Fixes" },
                                        is_string: false,
                                        verify_block: ->(value) { verify_type_map(value) }),
+          FastlaneCore::ConfigItem.new(key: :update,
+                                       env_name: "SEMANTIC_VERSIONING_UPDATE",
+                                       description: "When set, the changelog is determined from the previous rather than current version." \
+                                                    "This is useful when being on a release branch where new commits are added to the " \
+                                                    "current release",
+                                       optional: true,
+                                       default_value: false,
+                                       is_string: false),
           FastlaneCore::ConfigItem.new(key: :versioning_system,
                                        env_name: "SEMANTIC_VERSIONING_VERSIONING_SYSTEM",
                                        description: "Type of versioning to use. Can be 'manual' or 'apple-generic'." \

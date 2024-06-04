@@ -418,4 +418,28 @@ describe Fastlane::Helper::SemanticVersioningHelper do
       end
     end
   end
+
+  describe ".previous_version" do
+    subject { described_class.previous_version(tag_format: "v$version") }
+
+    before do
+      allow(Fastlane::Actions::LastGitTagAction).to receive(:run).and_return(tag)
+    end
+
+    context "when there is no tag yet" do
+      let(:tag) { "" }
+
+      it "returns 0.0.0" do
+        expect(subject).to eq("0.0.0")
+      end
+    end
+
+    context "when there is a last git tag" do
+      let(:tag) { "v1.0.0" }
+
+      it "returns the last tag" do
+        expect(subject).to eq("1.0.0")
+      end
+    end
+  end
 end

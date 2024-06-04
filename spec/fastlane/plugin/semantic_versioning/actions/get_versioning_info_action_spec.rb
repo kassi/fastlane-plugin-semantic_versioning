@@ -210,6 +210,23 @@ describe Fastlane::Actions::GetVersioningInfoAction do
         end
       end
     end
+
+    context "when update flag is used" do
+      let(:default_params) { map_default_params.merge(update: true) }
+      let(:messages) { ["feat: my feature"] }
+
+      before do
+        allow(Fastlane::Actions::LastGitTagAction).to receive(:run).and_return("")
+      end
+
+      it "returns success with correct values" do
+        expect(subject).to be_truthy
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_VERSION]).to eq("0.1.0")
+        expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SEMVER_NEW_CHANGELOG]).to match(
+          /- my feature/
+        )
+      end
+    end
   end
 
   describe ".is_supported?" do
