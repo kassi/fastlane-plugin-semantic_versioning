@@ -63,10 +63,10 @@ RSpec/ContextWording:
 RSpec/ExampleLength:
   Max: 13
 
-RSpec/FilePath:
+RSpec/SpecFilePathFormat:
   Enabled: false
 
-RSpec/SpecFilePathFormat:
+RSpec/SpecFilePathSuffix:
   Enabled: false
 
 RSpec/MultipleExpectations:

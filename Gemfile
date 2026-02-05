@@ -2,6 +2,8 @@
 
 source("https://rubygems.org")
 
+# Calculates the set of unique abbreviations for a given set of strings.
+gem "abbrev", "~> 0.1.2"
 # Provides a consistent environment for Ruby projects by tracking and installing exact gem versions.
 gem "bundler"
 # Provides a fake file system to test diverse file operations
@@ -14,6 +16,10 @@ gem "guard", "~> 2.18"
 gem "guard-rspec", "~> 4.7"
 # Provides an interactive debugging environment for Ruby.
 gem "guard-rubocop", "~> 1.5"
+# Interactive Ruby shell for experimentation and debugging.
+gem "irb"
+# Provides OpenStruct, a data structure similar to Hash that allows attribute-style access.
+gem "ostruct", "~> 0.6.3"
 # Provides an interactive debugging environment for Ruby.
 gem "pry"
 # A simple task automation tool.
