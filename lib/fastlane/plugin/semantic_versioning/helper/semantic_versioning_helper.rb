@@ -200,7 +200,7 @@ module Fastlane
       end
 
       def self.git_tag_exists?(tag)
-        git.tags.include?(tag)
+        git.tags.map(&:name).include?(tag)
       end
 
       def self.project(path = nil)

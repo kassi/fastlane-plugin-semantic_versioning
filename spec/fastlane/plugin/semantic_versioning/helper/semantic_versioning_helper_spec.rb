@@ -419,6 +419,40 @@ describe Fastlane::Helper::SemanticVersioningHelper do
     end
   end
 
+  describe ".git_tag_exists?" do
+    subject { described_class.git_tag_exists?(tag) }
+
+    let(:git_double) { instance_double(Git::Base) }
+    let(:existing_tags) do
+      [
+        instance_double(Git::Object::Tag, name: "v1.0.0"),
+        instance_double(Git::Object::Tag, name: "v1.1.0"),
+        instance_double(Git::Object::Tag, name: "v2.0.0")
+      ]
+    end
+
+    before do
+      allow(described_class).to receive(:git).and_return(git_double)
+      allow(git_double).to receive(:tags).and_return(existing_tags)
+    end
+
+    context "when the tag exists" do
+      let(:tag) { "v1.1.0" }
+
+      it "returns true" do
+        expect(subject).to be true
+      end
+    end
+
+    context "when the tag does not exist" do
+      let(:tag) { "v3.0.0" }
+
+      it "returns false" do
+        expect(subject).to be false
+      end
+    end
+  end
+
   describe ".previous_version" do
     subject { described_class.previous_version(tag_format: "v$version") }
 
