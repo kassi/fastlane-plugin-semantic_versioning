@@ -29,20 +29,23 @@ module Fastlane
         Helper::SemanticVersioningHelper.verify_versioning_system(params[:versioning_system])
 
         system = lane_context[SharedValues::SEMVER_VERSIONING_SYSTEM] = params[:versioning_system]
-        target = params[:target]
+        tag_format = params[:tag_format]
 
-        current_version = if params[:update]
-                            Helper::SemanticVersioningHelper.previous_version(tag_format: params[:tag_format])
-                          else
-                            Helper::SemanticVersioningHelper.version_number(system: system, target: target)
-                          end
-        formatted_tag = Helper::SemanticVersioningHelper.formatted_tag(current_version, params[:tag_format])
+        current_version = Helper::SemanticVersioningHelper.current_version(
+          tag_format: tag_format,
+          update: params[:update],
+          system: system,
+          target: params[:target]
+        )
+        formatted_tag = Helper::SemanticVersioningHelper.formatted_tag(current_version, tag_format)
+        UI.message("Current version: #{current_version} (#{formatted_tag})")
 
         commits = Helper::SemanticVersioningHelper.git_commits(
           from: Helper::SemanticVersioningHelper.git_tag_exists?(formatted_tag) ? formatted_tag : nil,
           allowed_types: params[:allowed_types],
           bump_map: params[:bump_map]
         )
+        UI.message("Found #{commits.length} commit#{commits.length == 1 ? 's' : ''} from last version tag")
 
         bump_type = Helper::SemanticVersioningHelper.bump_type(commits: commits, force_type: params[:force_type])
         new_version = Helper::SemanticVersioningHelper.increase_version(current_version: current_version,
@@ -50,6 +53,11 @@ module Fastlane
         new_changelog = Helper::SemanticVersioningHelper.build_changelog(version: new_version, commits: commits,
                                                                          type_map: params[:type_map])
         bumpable = current_version != new_version
+        if bumpable
+          UI.message("New version: #{new_version}")
+        else
+          UI.message("No new version to bump")
+        end
 
         Actions.lane_context[SharedValues::SEMVER_CURRENT_VERSION] = current_version
         Actions.lane_context[SharedValues::SEMVER_CURRENT_TAG] = formatted_tag

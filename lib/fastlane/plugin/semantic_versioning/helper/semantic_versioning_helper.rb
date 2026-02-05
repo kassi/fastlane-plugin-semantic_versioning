@@ -31,6 +31,14 @@ module Fastlane
         end
       end
 
+      def self.current_version(tag_format:, update:, system:, target:)
+        if update
+          Helper::SemanticVersioningHelper.previous_version(tag_format: tag_format)
+        else
+          Helper::SemanticVersioningHelper.version_number(system: system, target: target)
+        end
+      end
+
       def self.previous_version(tag_format:)
         tag = Fastlane::Actions::LastGitTagAction.run(pattern: tag_format.sub("$version", "[0-9].[0-9].[0-9]"))
         return "0.0.0" if tag.empty?
