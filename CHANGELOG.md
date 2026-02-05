@@ -1,3 +1,14 @@
+## 3.2.0 (2026-02-05)
+
+### Bug fixes
+
+- last git tag not determined correctly
+
+### Features
+
+- add option to bump manually when no bump would be made
+- add ui logging
+
 ## 3.1.0 (2024-06-04)
 
 ### Features
