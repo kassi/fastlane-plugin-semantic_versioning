@@ -13,7 +13,7 @@ def raw_commit(message)
 end
 
 def map_default_params
-  described_class.available_options.select(&:optional).to_h { |e| [e.key, e.default_value] }
+  described_class.available_options.select(&:optional).to_h { |e| [e.key, e.default_value] }.merge(skip_manual_bump: true)
 end
 
 describe Fastlane::Actions::GetVersioningInfoAction do

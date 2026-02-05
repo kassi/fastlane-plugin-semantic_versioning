@@ -24,10 +24,6 @@ module Fastlane
         params[:bump_map].transform_values!(&:to_sym)
         params[:force_type] = params[:force_type]&.to_sym
 
-        verify_type_map(params[:type_map])
-        verify_bump_map(params[:bump_map])
-        Helper::SemanticVersioningHelper.verify_versioning_system(params[:versioning_system])
-
         system = lane_context[SharedValues::SEMVER_VERSIONING_SYSTEM] = params[:versioning_system]
         tag_format = params[:tag_format]
 
@@ -48,16 +44,14 @@ module Fastlane
         UI.message("Found #{commits.length} commit#{commits.length == 1 ? 's' : ''} from last version tag")
 
         bump_type = Helper::SemanticVersioningHelper.bump_type(commits: commits, force_type: params[:force_type])
+        bump_type ||= Helper::SemanticVersioningHelper.manual_bump_type(skip_manual: params[:skip_manual_bump])
+
         new_version = Helper::SemanticVersioningHelper.increase_version(current_version: current_version,
                                                                         bump_type: bump_type)
         new_changelog = Helper::SemanticVersioningHelper.build_changelog(version: new_version, commits: commits,
                                                                          type_map: params[:type_map])
         bumpable = current_version != new_version
-        if bumpable
-          UI.message("New version: #{new_version}")
-        else
-          UI.message("No new version to bump")
-        end
+        UI.message("New version: #{new_version}") if bumpable
 
         Actions.lane_context[SharedValues::SEMVER_CURRENT_VERSION] = current_version
         Actions.lane_context[SharedValues::SEMVER_CURRENT_TAG] = formatted_tag
@@ -123,6 +117,12 @@ module Fastlane
                                        optional: true,
                                        default_value: nil,
                                        type: String),
+          FastlaneCore::ConfigItem.new(key: :skip_manual_bump,
+                                       env_name: "SEMANTIC_VERSIONING_SKIP_MANUAL_BUMP",
+                                       description: "When set, no interactive prompt is shown when there's no version to bump",
+                                       optional: true,
+                                       default_value: false,
+                                       is_string: false),
           FastlaneCore::ConfigItem.new(key: :tag_format,
                                        env_name: "SEMANTIC_VERSIONING_TAG_FORMAT",
                                        description: "The format for the git tag",

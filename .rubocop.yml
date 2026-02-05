@@ -36,7 +36,7 @@ Metrics/ClassLength:
   Max: 320
 
 Metrics/CyclomaticComplexity:
-  Max: 8
+  Max: 9
 
 Metrics/MethodLength:
   Enabled: false

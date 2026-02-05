@@ -120,6 +120,17 @@ module Fastlane
         result
       end
 
+      def self.manual_bump_type(skip_manual:)
+        return if skip_manual
+
+        UI.message("No new version to bump")
+        if !Helper.test? && UI.interactive?
+          return UI.select("If you do want to create a new version, select which type:", [:major, :minor, :patch, nil])
+        end
+
+        nil
+      end
+
       def self.group_commits(commits:, allowed_types:)
         result = allowed_types.to_h { |type| [type, []] }
         result[:none] = []
